@@ -5,120 +5,121 @@ import java.awt.*;
 
 public class Dashboard {
     public static void main(String[] args) {
-
-        // Main frame setup
         JFrame frame = new JFrame("Dashboard");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 500);
-        frame.setLayout(null);
+        frame.setSize(900, 600);
+        frame.setLayout(new BorderLayout());
 
-        // Left-side color panel
+        // LEFT NAVIGATION PANEL
         JPanel leftPanel = new JPanel();
         leftPanel.setBackground(Color.GREEN);
-        leftPanel.setBounds(0, 0, 80, 500);
-        leftPanel.setLayout(new GridLayout(5, 3));
-        frame.add(leftPanel);
-        
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+        leftPanel.setPreferredSize(new Dimension(120, frame.getHeight()));
+
         String[] navigatorTitles = {"DASHBOARD", "MEAL PLAN", "PROGRESS", "SCHEDULE", "NOTIFICATION"};
         for (String title : navigatorTitles) {
-            JButton navigatorButton = new JButton(title);
-            navigatorButton.setBackground(Color.GREEN);
-            navigatorButton.setBorderPainted(false); // Remove border for a cleaner look
-            navigatorButton.setFocusPainted(false); // Remove focus border
-            navigatorButton.setFont(new Font("Arial", Font.PLAIN, 7)); // Set font to Arial size 10
-            leftPanel.add(navigatorButton);
+            JButton button = new JButton(title);
+            button.setBackground(Color.GREEN);
+            button.setBorderPainted(false);
+            button.setFocusPainted(false);
+            button.setAlignmentX(Component.CENTER_ALIGNMENT);
+            button.setFont(new Font("Arial", Font.PLAIN, 10));
+            leftPanel.add(button);
+            leftPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         }
 
-        // Main background panel
+        frame.add(leftPanel, BorderLayout.WEST);
+
+        // MAIN CONTENT PANEL
         JPanel mainPanel = new JPanel();
         mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBounds(80, 0, 720, 500);
-        mainPanel.setLayout(null);
-        frame.add(mainPanel);
+        mainPanel.setLayout(new BorderLayout());
+        frame.add(mainPanel, BorderLayout.CENTER);
 
-        // Back button
+        // TOP BAR
+        JPanel topBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topBar.setBackground(Color.WHITE);
+
         JButton backButton = new JButton("<");
-        backButton.setBounds(10, 10, 43, 25);
-        mainPanel.add(backButton);
-
-        // Dashboard Title
         JLabel dashboardTitle = new JLabel("DASHBOARD");
         dashboardTitle.setFont(new Font("Arial", Font.BOLD, 20));
-        dashboardTitle.setBounds(70, 10, 150, 30);
-        mainPanel.add(dashboardTitle);
 
-        // Search Bar & User Button
-        JTextField searchField = new JTextField();
-        searchField.setBounds(250, 10, 250, 30);
-        mainPanel.add(searchField);
-
+        JTextField searchField = new JTextField(20);
         JButton searchButton = new JButton("Search");
-        searchButton.setBounds(510, 10, 80, 30);
-        mainPanel.add(searchButton);
-
         JButton userButton = new JButton("USER");
-        userButton.setBounds(600, 10, 80, 30);
-        mainPanel.add(userButton);
 
-        // Categories Section
+        topBar.add(backButton);
+        topBar.add(dashboardTitle);
+        topBar.add(Box.createHorizontalStrut(20));
+        topBar.add(searchField);
+        topBar.add(searchButton);
+        topBar.add(userButton);
+
+        mainPanel.add(topBar, BorderLayout.NORTH);
+
+        // CENTER PANEL FOR CONTENT
+        JPanel centerContent = new JPanel();
+        centerContent.setBackground(Color.WHITE);
+        centerContent.setLayout(null); // you can replace with GridBagLayout for more responsive layout
+
+        // CATEGORIES LABEL
         JLabel categoriesLabel = new JLabel("CATEGORIES");
         categoriesLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        categoriesLabel.setBounds(70, 60, 150, 30);
-        mainPanel.add(categoriesLabel);
+        categoriesLabel.setBounds(20, 10, 150, 30);
+        centerContent.add(categoriesLabel);
 
-
-        int xPos = 70;
+        // CATEGORY BOXES
+        int xPos = 20;
         for (int i = 0; i < 4; i++) {
             JPanel categoryBox = new JPanel();
-                 categoryBox.setBounds(xPos, 100, 100, 80);
-                 categoryBox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            categoryBox.setBounds(xPos, 50, 100, 80);
+            categoryBox.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            if (i == 0) {
+                categoryBox.setBackground(Color.WHITE);
+                JLabel plusSign = new JLabel("+", SwingConstants.CENTER);
+                plusSign.setForeground(Color.GREEN);
+                categoryBox.setLayout(new BorderLayout());
+                categoryBox.add(plusSign, BorderLayout.CENTER);
+            } else {
+                categoryBox.setBackground(Color.GREEN);
+            }
+            centerContent.add(categoryBox);
+            xPos += 120;
+        }
 
-    if (i == 0) {
-        // First box: white background, green "+"
-        categoryBox.setBackground(Color.WHITE);
-        JLabel plusSign = new JLabel("+", SwingConstants.CENTER);
-        plusSign.setForeground(Color.GREEN);
-        categoryBox.setLayout(new BorderLayout()); // Center the "+"
-        categoryBox.add(plusSign, BorderLayout.CENTER);
-    } else {
-        // Other boxes: green background
-        categoryBox.setBackground(Color.GREEN);
-    }
-
-    mainPanel.add(categoryBox);
-    xPos += 120;
-}
-
-        // Notification Section
+        // NOTIFICATIONS LABEL
         JLabel notificationLabel = new JLabel("NOTIFICATION");
         notificationLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        notificationLabel.setBounds(70, 200, 150, 30);
-        mainPanel.add(notificationLabel);
+        notificationLabel.setBounds(20, 150, 150, 30);
+        centerContent.add(notificationLabel);
 
-        // Notifications
-        int yPos = 240;
+        // NOTIFICATIONS
+        int yPos = 190;
         for (int i = 0; i < 2; i++) {
-            JPanel notificationPanel = new JPanel();
-            notificationPanel.setBounds(70, yPos, 550, 80);
-            notificationPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            notificationPanel.setLayout(new BorderLayout());
+            JPanel notifPanel = new JPanel();
+            notifPanel.setLayout(new BorderLayout());
+            notifPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            notifPanel.setBounds(20, yPos, 550, 80);
 
-            JLabel notificationTitle = new JLabel("Notification");
-            JTextArea notificationText = new JTextArea(i == 0 ? "It's time for your lunch baby!" : "notif.");
+            JLabel notifTitle = new JLabel("Notification");
+            JTextArea notifText = new JTextArea(i == 0 ? "It's time for your lunch Mommy!" : "notif.");
+            notifText.setWrapStyleWord(true);
+            notifText.setLineWrap(true);
+            notifText.setEditable(false);
 
-            JPanel buttonPanel = new JPanel();
-            JButton readButton = new JButton("READ");
-            JButton deleteButton = new JButton("DELETE");
-            buttonPanel.add(readButton);
-            buttonPanel.add(deleteButton);
+            JPanel notifButtons = new JPanel();
+            notifButtons.add(new JButton("READ"));
+            notifButtons.add(new JButton("DELETE"));
 
-            notificationPanel.add(notificationTitle, BorderLayout.NORTH);
-            notificationPanel.add(notificationText, BorderLayout.CENTER);
-            notificationPanel.add(buttonPanel, BorderLayout.SOUTH);
+            notifPanel.add(notifTitle, BorderLayout.NORTH);
+            notifPanel.add(notifText, BorderLayout.CENTER);
+            notifPanel.add(notifButtons, BorderLayout.SOUTH);
 
-            mainPanel.add(notificationPanel);
+            centerContent.add(notifPanel);
             yPos += 100;
         }
+
+        mainPanel.add(centerContent, BorderLayout.CENTER);
 
         frame.setVisible(true);
     }
