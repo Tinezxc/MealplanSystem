@@ -1,17 +1,23 @@
 
 package com.mycompany.forgetpassword;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Image;
+
 import javax.swing.*;
-import java.awt.*;
 
 public class ForgotPassword {
-    public static void main(String[] args) {
+            public static void main(String[] args) {
+        SwingUtilities.invokeLater(ForgotPassword::new);
+    }
+    public ForgotPassword() {
         JFrame frame = new JFrame("Forgot Password");
         frame.setSize(900, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
-        // Load and scale the background image to fit the frame
+        // Load and scale the background image
         ImageIcon originalIcon = new ImageIcon("C:/Users/THINKPAD/Pictures/Screenshots/pic.png");
         Image scaledImage = originalIcon.getImage().getScaledInstance(900, 600, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
@@ -19,7 +25,7 @@ public class ForgotPassword {
         JLabel background = new JLabel(scaledIcon);
         background.setBounds(0, 0, 900, 600);
         frame.setContentPane(background);
-        background.setLayout(null); // To place components manually
+        background.setLayout(null); // Use absolute positioning
 
         // Forgot Password panel
         JPanel panel = new JPanel();
@@ -47,7 +53,7 @@ public class ForgotPassword {
         submitButton.setBackground(Color.GREEN);
         panel.add(submitButton);
 
-        // Back to login label
+        // "Back to login" label
         JLabel backLabel = new JLabel("Remember your password?", SwingConstants.CENTER);
         backLabel.setForeground(Color.WHITE);
         backLabel.setBounds(100, 170, 200, 20);
@@ -57,9 +63,8 @@ public class ForgotPassword {
         loginLabel.setForeground(Color.GREEN);
         loginLabel.setFont(new Font("Arial", Font.BOLD, 12));
         loginLabel.setBounds(100, 190, 200, 20);
-        panel.add(loginLabel);
-        
-        // Back button
+
+        // Optional back button
         JButton backButton = new JButton("<");
         backButton.setBackground(Color.WHITE);
         backButton.setBounds(50, 210, 50, 20);
