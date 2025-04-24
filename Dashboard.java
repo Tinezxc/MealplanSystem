@@ -1,5 +1,6 @@
 package com.mycompany.dashboard;
 
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -13,7 +14,7 @@ public class Dashboard {
 
         JPanel leftPanel = new JPanel();
         leftPanel.setBackground(Color.GREEN);
-        leftPanel.setBounds(0, 0, 90, 520);
+        leftPanel.setBounds(0, 0, 90, 565);
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         frame.add(leftPanel);
 
