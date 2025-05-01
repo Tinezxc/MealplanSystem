@@ -1,93 +1,107 @@
-
 package com.mycompany.notification;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Notification {
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Notification Center");
-        frame.setSize(800, 530);
+    public Notification(String email) {
+        //frame
+        JFrame frame = new JFrame("Dashboard");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1550, 800); 
         frame.setLayout(null);
 
-        // Left navigation panel
         JPanel leftPanel = new JPanel();
-        leftPanel.setBackground(Color.GREEN);
-        leftPanel.setBounds(0, 0, 80, 500);
-        leftPanel.setLayout(new GridLayout(5, 1));
+        leftPanel.setBackground(Color.GRAY);
+        leftPanel.setBounds(0, 0, 150, 800); 
+        leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         frame.add(leftPanel);
+        
+        
+        leftPanel.add(Box.createVerticalStrut(150));
 
-        String[] navigatorTitles = {"DASHBOARD", "MEAL PLAN", "PROGRESS", "SCHEDULE", "NOTIFICATION"};
-        for (String title : navigatorTitles) {
-            JButton navigatorButton = new JButton(title);
-            navigatorButton.setBackground(Color.GREEN);
-            navigatorButton.setBorderPainted(false);
-            navigatorButton.setFocusPainted(false);
-            navigatorButton.setFont(new Font("Arial", Font.PLAIN, 7));
-            leftPanel.add(navigatorButton);
+        // Navigation Buttons
+        String[] navtitle = {"DASHBOARD", "MEAL PLAN", "SCHEDULE", "PROGRESS", "NOTIFICATION"};
+        for (String title : navtitle) {
+            JButton navButton = new JButton(title);
+            navButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            navButton.setMaximumSize(new Dimension(120, 200));
+            navButton.setFocusPainted(false);
+            navButton.setForeground(Color.BLACK);
+            navButton.setBackground(Color.GRAY);
+            navButton.setBorderPainted(false);
+            navButton.setFont(new Font("Arial", Font.PLAIN, 10));
+            leftPanel.add(navButton);
+            leftPanel.add(Box.createVerticalStrut(90));
         }
 
-        // Main content panel
+        // Main Panel
         JPanel mainPanel = new JPanel();
         mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBounds(80, 0, 720, 500);
+        mainPanel.setBounds(120, 0, 1430, 800);
         mainPanel.setLayout(null);
         frame.add(mainPanel);
 
-        // Back button
+        // backbutton
         JButton backButton = new JButton("<");
         backButton.setBackground(Color.WHITE);
-        backButton.setBounds(15, 10, 43, 25);
+        backButton.setBounds(50, 60, 70, 30);
         mainPanel.add(backButton);
 
-        // Title label
-        JLabel notificationTitle = new JLabel("NOTIFICATIONS");
-        notificationTitle.setFont(new Font("Arial", Font.BOLD, 16));
-        notificationTitle.setBounds(70, 10, 150, 30);
-        mainPanel.add(notificationTitle);
+        // Title
+        JLabel dashboardTitle = new JLabel("DASHBOARD");
+        dashboardTitle.setBackground(Color.WHITE);
+        dashboardTitle.setFont(new Font("Arial", Font.BOLD, 28));
+        dashboardTitle.setBounds(130, 50, 300, 50);
+        mainPanel.add(dashboardTitle);
 
-        // Search field
-        JTextField searchField = new JTextField(20);
-        searchField.setBounds(327, 5, 200, 30);
+        //Search Field and Buttons
+        JTextField searchField = new JTextField();
+        searchField.setBounds(760, 50, 400, 30);
         mainPanel.add(searchField);
 
-        // Search button
         JButton searchButton = new JButton("Search");
         searchButton.setBackground(Color.WHITE);
-        searchButton.setBounds(530, 5, 80, 30);
+        searchButton.setBounds(1170, 50, 100, 30);
         mainPanel.add(searchButton);
 
-        // User icon button
         JButton userButton = new JButton("👤");
         userButton.setBackground(Color.WHITE);
-        userButton.setBounds(615, 5, 80, 30);
+        userButton.setBounds(1280, 50, 100, 30);
         mainPanel.add(userButton);
 
-        // Notification display area
+        // Notification Area
         JTextArea notificationArea = new JTextArea();
         notificationArea.setEditable(false);
-        notificationArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        notificationArea.setFont(new Font("Arial", Font.PLAIN, 18));
         notificationArea.setText(
-            "- Meal Plan updated for next week\n" +
-            "- Progress Report is ready to view\n" +
-            "- System maintenance on April 18\n" +
-            "- Notification bell sound test\n"
+                "- Meal Plan updated for next week\n" +
+                "- Progress Report is ready to view\n" +
+                "- System maintenance on April 18\n" +
+                "- Notification bell sound test\n"
         );
 
         JScrollPane scrollPane = new JScrollPane(notificationArea);
-        scrollPane.setBounds(20, 100, 660, 300);
+        scrollPane.setBounds(50, 120, 1330, 500);
         mainPanel.add(scrollPane);
 
-        // Control buttons
+        // Clear and Refresh Buttons
         JButton clearButton = new JButton("Clear All");
-        clearButton.setBounds(20, 420, 100, 30);
+        clearButton.setFont(new Font("Arial", Font.BOLD, 16));
+        clearButton.setBackground(Color.WHITE);
+        clearButton.setBounds(50, 650, 130, 30);
         mainPanel.add(clearButton);
 
         JButton refreshButton = new JButton("Refresh");
-        refreshButton.setBounds(130, 420, 100, 30);
+        refreshButton.setFont(new Font("Arial", Font.BOLD, 16));
+        refreshButton.setBackground(Color.WHITE);
+        refreshButton.setBounds(220, 650, 130, 30);
         mainPanel.add(refreshButton);
 
         frame.setVisible(true);
+    }
+    
+            public static void main(String[] args) {
+        new Notification("demo@example.com");
     }
 }
