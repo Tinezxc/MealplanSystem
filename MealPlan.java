@@ -1,6 +1,5 @@
 package com.mycompany.mealplan;
 
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,99 +8,113 @@ public class MealPlan {
     private static final String[] MEALS = {"Breakfast", "Snack 1", "Lunch", "Snack 2", "Dinner"};
     private static final String[] WEEKS = {"Week 1", "Week 2", "Week 3", "Week 4"};
 
-    public MealPlan(String email, String username) {
+    public MealPlan(String email) {
         JFrame frame = new JFrame("Meal Plan");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 550);
+        frame.setSize(1550, 800);
         frame.setLayout(null);
 
-        // Left panel
+        // Left-side panel
         JPanel leftPanel = new JPanel();
-        leftPanel.setBackground(Color.GREEN);
-        leftPanel.setBounds(0, 0, 90, 520);
+        leftPanel.setBackground(Color.GRAY);
+        leftPanel.setBounds(0, 0, 150, 800);
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         frame.add(leftPanel);
 
-        leftPanel.add(Box.createVerticalStrut(40));
+        leftPanel.add(Box.createVerticalStrut(150));
+
         String[] navtitle = {"DASHBOARD", "MEAL PLAN", "SCHEDULE", "PROGRESS", "NOTIFICATION"};
         for (String title : navtitle) {
             JButton navButton = new JButton(title);
             navButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            navButton.setMaximumSize(new Dimension(110, 50));
+            navButton.setMaximumSize(new Dimension(120, 200));
             navButton.setFocusPainted(false);
             navButton.setForeground(Color.BLACK);
-            navButton.setBackground(Color.GREEN);
+            navButton.setBackground(Color.GRAY);
             navButton.setBorderPainted(false);
-            navButton.setFont(new Font("Arial", Font.PLAIN, 7));
+            navButton.setFont(new Font("Arial", Font.PLAIN, 10));
             leftPanel.add(navButton);
-            leftPanel.add(Box.createVerticalStrut(40));
+            leftPanel.add(Box.createVerticalStrut(90));
         }
 
-        // Main panel
-        JPanel mainPanel = new JPanel();
-        mainPanel.setBounds(80, 0, 720, 500);
-        mainPanel.setLayout(null);
-        frame.add(mainPanel);
-
-        // Top panel
-        JPanel topRightPanel = new JPanel(null);
-        topRightPanel.setBounds(0, 0, 700, 40);
-        mainPanel.add(topRightPanel);
+        // Top Panel
+        JPanel topPanel = new JPanel(null);
+        topPanel.setBounds(150, 0, 1400, 100);
+        topPanel.setBackground(null); // Transparent
+        frame.add(topPanel);
 
         JButton backButton = new JButton("<");
-        backButton.setBounds(15, 5, 43, 30);
+        backButton.setBounds(30, 25, 60, 30);
         backButton.setBackground(Color.WHITE);
-        topRightPanel.add(backButton);
+        topPanel.add(backButton);
 
-        JLabel scheduleTitle = new JLabel("MEAL PLAN");
-        scheduleTitle.setFont(new Font("Arial", Font.BOLD, 16));
-        scheduleTitle.setBounds(70, 10, 150, 30);
-        topRightPanel.add(scheduleTitle);
+        JLabel titleLabel = new JLabel("MEAL PLAN");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
+        titleLabel.setBounds(110, 20, 300, 40);
+        topPanel.add(titleLabel);
 
         JTextField searchField = new JTextField();
-        searchField.setBounds(327, 5, 200, 30);
-        topRightPanel.add(searchField);
+        searchField.setBounds(860, 25, 300, 30);
+        topPanel.add(searchField);
 
         JButton searchButton = new JButton("Search");
-        searchButton.setBounds(530, 5, 80, 30);
+        searchButton.setBounds(1170, 25, 90, 30);
         searchButton.setBackground(Color.WHITE);
-        topRightPanel.add(searchButton);
+        topPanel.add(searchButton);
 
         JButton userButton = new JButton("👤");
-        userButton.setBounds(615, 5, 80, 30);
+        userButton.setBounds(1270, 25, 60, 30);
         userButton.setBackground(Color.WHITE);
-        topRightPanel.add(userButton);
+        topPanel.add(userButton);
 
-        // Meal grid
+        // Action Buttons Panel below search bar
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        buttonPanel.setBounds(860, 60, 470, 35);
+        buttonPanel.setOpaque(false);
+        topPanel.add(buttonPanel);
+
+        JButton editPlanButton = new JButton("EDIT PLAN");
+        JButton saveButton = new JButton("SAVE");
+        JButton editButton = new JButton("EDIT");
+        JButton deleteButton = new JButton("DELETE");
+
+        for (JButton btn : new JButton[]{editPlanButton, saveButton, editButton, deleteButton}) {
+            btn.setPreferredSize(new Dimension(105, 30));
+            btn.setFocusPainted(false);
+            btn.setBackground(Color.WHITE);
+            buttonPanel.add(btn);
+        }
+
+        // Meal Grid Section
         JPanel mealPanel = new JPanel(new BorderLayout());
-        mealPanel.setBounds(20, 60, 680, 400);
-        mainPanel.add(mealPanel);
+        mealPanel.setBounds(200, 100, 1290, 640);
+        frame.add(mealPanel);
 
-        // Header (Week + Meals)
-        JPanel headerPanel = new JPanel(new GridLayout(1, MEALS.length + 1, 10, 10));
+        // Header Panel
+        JPanel headerPanel = new JPanel(new GridLayout(1, MEALS.length + 1, 20, 20));
         JComboBox<String> weekComboBox = new JComboBox<>(WEEKS);
-        weekComboBox.setFont(new Font("Arial", Font.PLAIN, 10));
+        weekComboBox.setFont(new Font("Arial", Font.PLAIN, 14));
         headerPanel.add(weekComboBox);
 
         for (String meal : MEALS) {
             JLabel label = new JLabel(meal, SwingConstants.CENTER);
-            label.setFont(new Font("Arial", Font.BOLD, 10));
+            label.setFont(new Font("Arial", Font.BOLD, 16));
             headerPanel.add(label);
         }
 
-        // Grid of days x meals
-        JPanel gridPanel = new JPanel(new GridLayout(DAYS.length, MEALS.length + 1, 10, 10));
+        // Grid Panel
+        JPanel gridPanel = new JPanel(new GridLayout(DAYS.length, MEALS.length + 1, 20, 20));
         for (String day : DAYS) {
-            JLabel dayLabel = new JLabel(day.toUpperCase());
-            dayLabel.setFont(new Font("Arial", Font.BOLD, 12));
+            JLabel dayLabel = new JLabel(day.toUpperCase(), SwingConstants.CENTER);
+            dayLabel.setFont(new Font("Arial", Font.BOLD, 16));
             gridPanel.add(dayLabel);
 
             for (int j = 0; j < MEALS.length; j++) {
                 JButton mealButton = new JButton("+");
-                mealButton.setFont(new Font("Arial", Font.PLAIN, 10));
+                mealButton.setFont(new Font("Arial", Font.PLAIN, 14));
                 mealButton.setFocusPainted(false);
                 mealButton.setBackground(Color.WHITE);
-                mealButton.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                mealButton.setPreferredSize(new Dimension(80, 40));
                 gridPanel.add(mealButton);
             }
         }
@@ -113,6 +126,6 @@ public class MealPlan {
     }
 
     public static void main(String[] args) {
-        new MealPlan("demo@example.com", "demoUser");
+        new MealPlan("demo@example.com");
     }
 }
