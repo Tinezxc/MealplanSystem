@@ -1,102 +1,124 @@
-
 package com.mycompany.registrationpage;
 
 import javax.swing.*;
 import java.awt.*;
-
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 
 public class RegistrationPage {
-        public static void main(String[] args) {
-        SwingUtilities.invokeLater(RegistrationPage::new);
-    }
+
     public RegistrationPage() {
-        JFrame frame = new JFrame("Login Page");
-        frame.setSize(900, 600);
+        JFrame frame = new JFrame("Registration Page");
+        frame.setSize(1550, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
-        // Load and scale background
-        ImageIcon originalIcon = new ImageIcon("C:/Users/THINKPAD/Pictures/Screenshots/pic.png");
-        Image scaledImage = originalIcon.getImage().getScaledInstance(900, 600, Image.SCALE_SMOOTH);
+        ImageIcon originalIcon = new ImageIcon("C:\\Users\\ALLAN JUSTINE\\Downloads\\BackGroundUI.png");
+        Image scaledImage = originalIcon.getImage().getScaledInstance(1550, 800, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
         JLabel background = new JLabel(scaledIcon);
-        background.setBounds(0, 0, 900, 600);
+        background.setBounds(0, 0, 1550, 800);
         frame.setContentPane(background);
         background.setLayout(null);
 
-        // Registration Panel
-        JPanel panel = new JPanel();
-        panel.setBounds(250, 100, 400, 400);
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setColor(Color.WHITE);
+                g2d.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 30, 30);
+                g2d.dispose();
+            }
+        };
+
+        int panelWidth = 400;
+        int panelHeight = 500; // reduced height since we removed buttons
+        int xPos = (frame.getWidth() - panelWidth) / 2;
+        int yPos = (frame.getHeight() - panelHeight) / 2;
+        panel.setBounds(xPos, yPos, panelWidth, panelHeight);
         panel.setLayout(null);
-        panel.setBackground(new Color(0, 0, 0, 150));
         background.add(panel);
 
-        JLabel registrationLabel = new JLabel("Registration");
-        registrationLabel.setForeground(Color.GREEN);
-        registrationLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        registrationLabel.setBounds(140, 10, 200, 30);
-        panel.add(registrationLabel);
+        ImageIcon logoIcon = new ImageIcon("C:\\Users\\ALLAN JUSTINE\\Downloads\\LogoUi.jpg");
+        Image logoImage = logoIcon.getImage();
+        Image circularLogo = createCircularImage(logoImage, 130);
+        JLabel logoLabel = new JLabel(new ImageIcon(circularLogo));
+        logoLabel.setBounds(120, 4, 150, 150);
+        panel.add(logoLabel);
+        
+        // "Login" text label under logo
+        JLabel loginTitle = new JLabel("Register", SwingConstants.CENTER);
+        loginTitle.setFont(new Font("Arial", Font.BOLD, 20));
+        loginTitle.setForeground(Color.BLACK);
+        loginTitle.setBounds(150, 140, 100, 40);
+        panel.add(loginTitle);
 
-        // Full Name
-        JLabel nameLabel = new JLabel("Full Name:");
-        nameLabel.setForeground(Color.WHITE);
-        nameLabel.setBounds(50, 50, 250, 20);
-        panel.add(nameLabel);
+        JLabel fullNameLabel = new JLabel("Full Name:");
+        fullNameLabel.setBounds(50, 170, 300, 20);
+        panel.add(fullNameLabel);
 
-        JTextField nameField = new JTextField();
-        nameField.setBounds(50, 70, 300, 30);
-        panel.add(nameField);
+        JTextField fullNameField = new JTextField();
+        fullNameField.setBounds(50, 190, 300, 30);
+        panel.add(fullNameField);
 
-        // Username (moved down below Full Name)
-        JLabel userLabel = new JLabel("Username:");
-        userLabel.setForeground(Color.WHITE);
-        userLabel.setBounds(50, 110, 250, 20);
-        panel.add(userLabel);
+        JLabel usernameLabel = new JLabel("Username:");
+        usernameLabel.setBounds(50, 230, 300, 20);
+        panel.add(usernameLabel);
 
-        JTextField userField = new JTextField();
-        userField.setBounds(50, 130, 300, 30);
-        panel.add(userField);
+        JTextField usernameField = new JTextField();
+        usernameField.setBounds(50, 250, 300, 30);
+        panel.add(usernameField);
 
-        // Email
         JLabel emailLabel = new JLabel("Email:");
-        emailLabel.setForeground(Color.WHITE);
-        emailLabel.setBounds(50, 170, 200, 20);
+        emailLabel.setBounds(50, 290, 300, 20);
         panel.add(emailLabel);
 
         JTextField emailField = new JTextField();
-        emailField.setBounds(50, 190, 300, 30);
+        emailField.setBounds(50, 310, 300, 30);
         panel.add(emailField);
 
-        // Password
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setForeground(Color.WHITE);
-        passwordLabel.setBounds(50, 230, 200, 20);
+        passwordLabel.setBounds(50, 350, 300, 20);
         panel.add(passwordLabel);
 
         JPasswordField passwordField = new JPasswordField();
-        passwordField.setBounds(50, 250, 300, 30);
+        passwordField.setBounds(50, 370, 300, 30);
         panel.add(passwordField);
 
-        // Register Button
         JButton registerButton = new JButton("Register");
-        registerButton.setBounds(150, 300, 100, 30);
-        registerButton.setBackground(Color.GREEN);
+        registerButton.setForeground(Color.WHITE);
+        registerButton.setBackground(Color.BLACK);
+        registerButton.setBounds(150, 420, 100, 30);
         panel.add(registerButton);
 
-        // Login Link
-        JLabel loginLabel = new JLabel("Already have an account?");
-        loginLabel.setForeground(Color.WHITE);
-        loginLabel.setBounds(100, 340, 200, 30);
+        JLabel alreadyAccountLabel = new JLabel("Already have an account?");
+        alreadyAccountLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+        alreadyAccountLabel.setBounds(125, 460, 150, 20);
+        panel.add(alreadyAccountLabel);
+
+        JLabel loginLabel = new JLabel("Login");
+        loginLabel.setForeground(Color.BLUE);
+        loginLabel.setFont(new Font("Arial", Font.PLAIN, 10));
+        loginLabel.setBounds(250, 460, 50, 20);
         panel.add(loginLabel);
 
-        JLabel loginLabel1 = new JLabel(" Login");
-        loginLabel1.setForeground(Color.GREEN);
-        loginLabel1.setBounds(250, 340, 100, 30);
-        loginLabel1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        panel.add(loginLabel1);
-
-        background.add(panel);
         frame.setVisible(true);
+    }
+
+    private Image createCircularImage(Image image, int diameter) {
+        BufferedImage circularImage = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = circularImage.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Ellipse2D.Double clip = new Ellipse2D.Double(0, 0, diameter, diameter);
+        g2d.setClip(clip);
+        g2d.drawImage(image, 0, 0, diameter, diameter, null);
+        g2d.dispose();
+        return circularImage;
+    }
+
+    public static void main(String[] args) {
+        new RegistrationPage();
     }
 }
