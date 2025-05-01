@@ -1,76 +1,74 @@
-
-package com.mycompany.forgetpassword;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Image;
+package com.mycompany.forgotpassword;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ForgotPassword {
-            public static void main(String[] args) {
-        SwingUtilities.invokeLater(ForgotPassword::new);
-    }
     public ForgotPassword() {
         JFrame frame = new JFrame("Forgot Password");
-        frame.setSize(900, 600);
+        frame.setSize(1550, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
-        // Load and scale the background image
-        ImageIcon originalIcon = new ImageIcon("C:/Users/THINKPAD/Pictures/Screenshots/pic.png");
-        Image scaledImage = originalIcon.getImage().getScaledInstance(900, 600, Image.SCALE_SMOOTH);
+        ImageIcon originalIcon = new ImageIcon("C:/Users/THINKPAD/Downloads/bg.png");
+        Image scaledImage = originalIcon.getImage().getScaledInstance(1550, 800, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
         JLabel background = new JLabel(scaledIcon);
-        background.setBounds(0, 0, 900, 600);
+        background.setBounds(0, 0, 1550, 800);
         frame.setContentPane(background);
-        background.setLayout(null); // Use absolute positioning
+        background.setLayout(null);
 
-        // Forgot Password panel
-        JPanel panel = new JPanel();
-        panel.setBounds(250, 150, 400, 250);
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setColor(Color.WHITE);
+                g2d.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 30, 30);
+                g2d.dispose();
+            }
+        };
+        int panelWidth = 400;
+        int panelHeight = 350;
+        int xPos = (frame.getWidth() - panelWidth) / 2;
+        int yPos = (frame.getHeight() - panelHeight) / 2;
+        panel.setBounds(xPos, yPos, panelWidth, panelHeight);
         panel.setLayout(null);
-        panel.setBackground(new Color(0, 0, 0, 150));
 
-        JLabel forgotLabel = new JLabel("Forgot Password", SwingConstants.CENTER);
-        forgotLabel.setForeground(Color.GREEN);
-        forgotLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        forgotLabel.setBounds(100, 10, 200, 30);
-        panel.add(forgotLabel);
+        background.add(panel);
 
-        JLabel emailLabel = new JLabel("Enter your email:");
-        emailLabel.setForeground(Color.WHITE);
-        emailLabel.setBounds(50, 60, 300, 20);
+        JLabel titleLabel = new JLabel("FORGOT PASSWORD", SwingConstants.CENTER);
+        titleLabel.setForeground(Color.BLACK);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        titleLabel.setBounds(70, 50, 250, 20);
+        panel.add(titleLabel);
+
+        JLabel emailLabel = new JLabel("Enter your Email:");
+        emailLabel.setForeground(Color.BLACK);
+        emailLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        emailLabel.setBounds(50, 110, 300, 20);
         panel.add(emailLabel);
 
         JTextField emailField = new JTextField();
-        emailField.setBounds(50, 85, 300, 30);
+        emailField.setBounds(50, 135, 300, 30);
         panel.add(emailField);
 
-        JButton submitButton = new JButton("Submit");
-        submitButton.setBounds(150, 130, 100, 30);
-        submitButton.setBackground(Color.GREEN);
-        panel.add(submitButton);
+        JButton resetButton = new JButton("Reset Password");
+        resetButton.setForeground(Color.WHITE);
+        resetButton.setBackground(Color.BLACK);
+        resetButton.setFont(new Font("Arial", Font.PLAIN, 12));
+        resetButton.setBounds(130, 180, 140, 30);
+        panel.add(resetButton);
 
-        // "Back to login" label
-        JLabel backLabel = new JLabel("Remember your password?", SwingConstants.CENTER);
-        backLabel.setForeground(Color.WHITE);
-        backLabel.setBounds(100, 170, 200, 20);
-        panel.add(backLabel);
+        JLabel backToLogin = new JLabel("Back to Login", SwingConstants.CENTER);
+        backToLogin.setForeground(Color.BLUE);
+        backToLogin.setFont(new Font("Arial", Font.PLAIN, 10));
+        backToLogin.setBounds(150, 220, 100, 20);
+        backToLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        panel.add(backToLogin);
 
-        JLabel loginLabel = new JLabel("Back to Login", SwingConstants.CENTER);
-        loginLabel.setForeground(Color.GREEN);
-        loginLabel.setFont(new Font("Arial", Font.BOLD, 12));
-        loginLabel.setBounds(100, 190, 200, 20);
-
-        // Optional back button
-        JButton backButton = new JButton("<");
-        backButton.setBackground(Color.WHITE);
-        backButton.setBounds(50, 210, 50, 20);
-        panel.add(backButton);
-
-        background.add(panel);
         frame.setVisible(true);
     }
+    
 }
