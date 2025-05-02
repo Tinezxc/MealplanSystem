@@ -2,6 +2,7 @@ package com.mycompany.loginpage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 
@@ -9,24 +10,26 @@ public class LoginPage {
 
     public LoginPage () {
         JFrame frame = new JFrame("Login Page");
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setUndecorated(true); // Optional: remove title bar
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(null);
-
+        // Set the frame to full screen but not maximized, based on screen size
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = screenSize.width;
         int screenHeight = screenSize.height;
+        frame.setSize(screenWidth, screenHeight);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(null);
 
+        // Load and scale background image to fit the entire screen
         ImageIcon originalIcon = new ImageIcon("D:\\My Documents\\Downloads\\BackGroundUI.png");
         Image scaledImage = originalIcon.getImage().getScaledInstance(screenWidth, screenHeight, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
+        // Set the background image
         JLabel background = new JLabel(scaledIcon);
         background.setBounds(0, 0, screenWidth, screenHeight);
         frame.setContentPane(background);
         background.setLayout(null);
 
+        // Create the login panel with rounded corners
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -37,34 +40,31 @@ public class LoginPage {
                 g2d.dispose();
             }
         };
+        
+        // Panel size and positioning
         int panelWidth = 400;
         int panelHeight = 480;
-        int xPos = (screenWidth - panelWidth) / 2;
-        int yPos = (screenHeight - panelHeight) / 2;
+        int xPos = (screenWidth - panelWidth) / 2; // Center horizontally
+        int yPos = (screenHeight - panelHeight) / 2; // Center vertically
         panel.setBounds(xPos, yPos, panelWidth, panelHeight);
         panel.setLayout(null);
         background.add(panel);
 
-        int verticalOffset = 20;
+       // Vertical offset to shift components downward
+        int verticalOffset = 20; // You can adjust this value to shift the fields more or less
 
-        // Logo (fallback if missing)
-        JLabel logoLabel;
-        try {
-            ImageIcon logoIcon = new ImageIcon("D:\\My Documents\\Downloads\\LogoUi.jpg");
-            Image logoImage = logoIcon.getImage();
-            Image circularLogo = createCircularImage(logoImage, 130);
-            logoLabel = new JLabel(new ImageIcon(circularLogo));
-        } catch (Exception e) {
-            logoLabel = new JLabel("No Logo", SwingConstants.CENTER);
-            logoLabel.setFont(new Font("Arial", Font.BOLD, 18));
-            logoLabel.setForeground(Color.GRAY);
-            logoLabel.setOpaque(true);
-            logoLabel.setBackground(Color.LIGHT_GRAY);
-        }
+        ImageIcon logoIcon = new ImageIcon("D:\\My Documents\\Downloads\\LogoUi.jpg");
+        Image logoImage = logoIcon.getImage();
+        Image circularLogo = createCircularImage(logoImage, 130);
+        JLabel logoLabel = new JLabel(new ImageIcon(circularLogo));
+        logoLabel.setBounds(120, 10, 150, 150);
+        panel.add(logoLabel);
+        
+        
         logoLabel.setBounds(120, 10, 150, 150);
         panel.add(logoLabel);
 
-        // Centered "Login"
+        // "Login" text centered under logo
         JLabel loginTitle = new JLabel("Login");
         loginTitle.setFont(new Font("Arial", Font.BOLD, 24));
         loginTitle.setForeground(Color.BLACK);
@@ -115,7 +115,7 @@ public class LoginPage {
         loginButton.setBounds(150, 340 + verticalOffset, 100, 30);
         panel.add(loginButton);
 
-        // Register
+        // Register Option
         JLabel registerLabel = new JLabel("Don't have an account?");
         registerLabel.setForeground(Color.BLACK);
         registerLabel.setFont(new Font("Arial", Font.PLAIN, 10));
@@ -129,9 +129,11 @@ public class LoginPage {
         registerLabel1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         panel.add(registerLabel1);
 
+        // Make the window visible
         frame.setVisible(true);
     }
 
+    // Method to create a circular image (used for the logo)
     private Image createCircularImage(Image image, int diameter) {
         BufferedImage circularImage = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = circularImage.createGraphics();
