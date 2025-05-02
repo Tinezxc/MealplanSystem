@@ -8,21 +8,19 @@ import java.awt.event.ComponentEvent;
 public class NewPassword {
     public NewPassword(String email) {
         JFrame frame = new JFrame("New Password");
-        frame.setUndecorated(true);  // Optional: Remove window title bar for fullscreen
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Fullscreen setup (optional)
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        gd.setFullScreenWindow(frame);
+        // Set window to be maximized on start
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);  // Maximized but still resizable
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
         // Background image setup
-        ImageIcon originalIcon = new ImageIcon("D:\\My Documents\\Downloads\\BackGroundUI.png");
+        ImageIcon originalIcon = new ImageIcon("C:\\Users\\ALLAN JUSTINE\\Downloads\\BackGroundUI.png");
         JLabel background = new JLabel();
         background.setLayout(null);
         frame.setContentPane(background);
 
-        // Panel setup (with rounded corners)
+        // Panel setup with rounded corners
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
