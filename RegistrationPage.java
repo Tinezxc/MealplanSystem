@@ -2,28 +2,27 @@ package com.mycompany.loginpage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.image.BufferedImage;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
-public class RegistrationPage {
-
-    public RegistrationPage() {
-        JFrame frame = new JFrame("Registration Page");
-        frame.setUndecorated(true); // Removes title bar
+public class NewPassword {
+    public NewPassword(String email) {
+        JFrame frame = new JFrame("New Password");
+        frame.setUndecorated(true);  // Optional: Remove window title bar for fullscreen
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Fullscreen
+        // Fullscreen setup (optional)
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         gd.setFullScreenWindow(frame);
         frame.setLayout(null);
 
         // Background image setup
-        ImageIcon originalIcon = new ImageIcon("C:\\Users\\ALLAN JUSTINE\\Downloads\\BackGroundUI.png");
+        ImageIcon originalIcon = new ImageIcon("D:\\My Documents\\Downloads\\BackGroundUI.png");
         JLabel background = new JLabel();
         background.setLayout(null);
         frame.setContentPane(background);
 
-        // Panel setup
+        // Panel setup (with rounded corners)
         JPanel panel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -37,98 +36,77 @@ public class RegistrationPage {
         };
 
         int panelWidth = 400;
-        int panelHeight = 500;
+        int panelHeight = 350;
         panel.setSize(panelWidth, panelHeight);
         panel.setLayout(null);
         background.add(panel);
 
-        // Center panel initially
-        SwingUtilities.invokeLater(() -> {
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            panel.setLocation((screenSize.width - panelWidth) / 2, (screenSize.height - panelHeight) / 2);
-        });
-
-        // Circular logo
-        ImageIcon logoIcon = new ImageIcon("C:\\Users\\ALLAN JUSTINE\\Downloads\\LogoUi.jpg");
-        Image logoImage = logoIcon.getImage();
-        Image circularLogo = createCircularImage(logoImage, 130);
-        JLabel logoLabel = new JLabel(new ImageIcon(circularLogo));
-        logoLabel.setBounds(120, 4, 150, 150);
-        panel.add(logoLabel);
-
-        JLabel loginTitle = new JLabel("Register", SwingConstants.CENTER);
-        loginTitle.setFont(new Font("Arial", Font.BOLD, 20));
-        loginTitle.setForeground(Color.BLACK);
-        loginTitle.setBounds(150, 140, 100, 40);
-        panel.add(loginTitle);
-
-        addLabelAndField(panel, "Full Name:", 170, 190);
-        addLabelAndField(panel, "Username:", 230, 250);
-        addLabelAndField(panel, "Email:", 290, 310);
-        addLabelAndField(panel, "Password:", 350, 370, true);
-
-        JButton registerButton = new JButton("Register");
-        registerButton.setForeground(Color.WHITE);
-        registerButton.setBackground(Color.BLACK);
-        registerButton.setBounds(150, 420, 100, 30);
-        panel.add(registerButton);
-
-        JLabel alreadyAccountLabel = new JLabel("Already have an account?");
-        alreadyAccountLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-        alreadyAccountLabel.setBounds(125, 460, 150, 20);
-        panel.add(alreadyAccountLabel);
-
-        JLabel loginLabel = new JLabel("Login");
-        loginLabel.setForeground(Color.BLUE);
-        loginLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-        loginLabel.setBounds(250, 460, 50, 20);
-        panel.add(loginLabel);
-
-        // Dynamic resize behavior
-        frame.addComponentListener(new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent e) {
+        // Center the panel whenever the window is resized
+        frame.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
                 int frameWidth = frame.getWidth();
                 int frameHeight = frame.getHeight();
 
-                // Resize background
+                // Resize background image to fit window
                 Image scaledImage = originalIcon.getImage().getScaledInstance(frameWidth, frameHeight, Image.SCALE_SMOOTH);
                 background.setIcon(new ImageIcon(scaledImage));
                 background.setBounds(0, 0, frameWidth, frameHeight);
 
-                // Recenter the panel
+                // Re-center the panel
                 panel.setLocation((frameWidth - panelWidth) / 2, (frameHeight - panelHeight) / 2);
             }
         });
 
+        // Title label
+        JLabel titleLabel = new JLabel("NEW PASSWORD", SwingConstants.CENTER);
+        titleLabel.setForeground(Color.BLACK);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        titleLabel.setBounds(70, 50, 250, 20);
+        panel.add(titleLabel);
+
+        // New password label and field
+        JLabel newPasswordLabel = new JLabel("Enter New Password:");
+        newPasswordLabel.setForeground(Color.BLACK);
+        newPasswordLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        newPasswordLabel.setBounds(50, 110, 300, 20);
+        panel.add(newPasswordLabel);
+
+        JPasswordField newPasswordField = new JPasswordField();
+        newPasswordField.setBounds(50, 135, 300, 30);
+        panel.add(newPasswordField);
+
+        // Confirm password label and field
+        JLabel confirmPasswordLabel = new JLabel("Confirm New Password:");
+        confirmPasswordLabel.setForeground(Color.BLACK);
+        confirmPasswordLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        confirmPasswordLabel.setBounds(50, 170, 300, 20);
+        panel.add(confirmPasswordLabel);
+
+        JPasswordField confirmPasswordField = new JPasswordField();
+        confirmPasswordField.setBounds(50, 195, 300, 30);
+        panel.add(confirmPasswordField);
+
+        // Reset password button
+        JButton resetButton = new JButton("Reset Password");
+        resetButton.setForeground(Color.WHITE);
+        resetButton.setBackground(Color.BLACK);
+        resetButton.setFont(new Font("Arial", Font.PLAIN, 12));
+        resetButton.setBounds(130, 240, 140, 30);
+        panel.add(resetButton);
+
+        // Back to login label
+        JLabel backToLogin = new JLabel("Back to Login", SwingConstants.CENTER);
+        backToLogin.setForeground(Color.BLUE);
+        backToLogin.setFont(new Font("Arial", Font.PLAIN, 10));
+        backToLogin.setBounds(150, 270, 100, 20);
+        backToLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        panel.add(backToLogin);
+
+        // Make the window visible
         frame.setVisible(true);
     }
 
-    private void addLabelAndField(JPanel panel, String labelText, int labelY, int fieldY) {
-        addLabelAndField(panel, labelText, labelY, fieldY, false);
-    }
-
-    private void addLabelAndField(JPanel panel, String labelText, int labelY, int fieldY, boolean isPassword) {
-        JLabel label = new JLabel(labelText);
-        label.setBounds(50, labelY, 300, 20);
-        panel.add(label);
-
-        JTextField field = isPassword ? new JPasswordField() : new JTextField();
-        field.setBounds(50, fieldY, 300, 30);
-        panel.add(field);
-    }
-
-    private Image createCircularImage(Image image, int diameter) {
-        BufferedImage circularImage = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = circularImage.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Ellipse2D.Double clip = new Ellipse2D.Double(0, 0, diameter, diameter);
-        g2d.setClip(clip);
-        g2d.drawImage(image, 0, 0, diameter, diameter, null);
-        g2d.dispose();
-        return circularImage;
-    }
-
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(RegistrationPage::new);
+        new NewPassword("user@example.com"); // Example email
     }
 }
