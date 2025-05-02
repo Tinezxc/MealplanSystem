@@ -9,16 +9,21 @@ public class LoginPage {
 
     public LoginPage () {
         JFrame frame = new JFrame("Login Page");
-        frame.setSize(1550, 800);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setUndecorated(true); // Optional: remove title bar
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
-        ImageIcon originalIcon = new ImageIcon("C:\\Users\\ALLAN JUSTINE\\Downloads\\BackGroundUI.png");
-        Image scaledImage = originalIcon.getImage().getScaledInstance(1550, 800, Image.SCALE_SMOOTH);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
+
+        ImageIcon originalIcon = new ImageIcon("D:\\My Documents\\Downloads\\BackGroundUI.png");
+        Image scaledImage = originalIcon.getImage().getScaledInstance(screenWidth, screenHeight, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
         JLabel background = new JLabel(scaledIcon);
-        background.setBounds(0, 0, 1550, 800);
+        background.setBounds(0, 0, screenWidth, screenHeight);
         frame.setContentPane(background);
         background.setLayout(null);
 
@@ -34,28 +39,37 @@ public class LoginPage {
         };
         int panelWidth = 400;
         int panelHeight = 480;
-        int xPos = (frame.getWidth() - panelWidth) / 2;
-        int yPos = (frame.getHeight() - panelHeight) / 2;
+        int xPos = (screenWidth - panelWidth) / 2;
+        int yPos = (screenHeight - panelHeight) / 2;
         panel.setBounds(xPos, yPos, panelWidth, panelHeight);
         panel.setLayout(null);
         background.add(panel);
 
-        // Vertical offset to shift components downward
-        int verticalOffset = 20; // You can adjust this value to shift the fields more or less
+        int verticalOffset = 20;
 
-        // Logo
-        ImageIcon logoIcon = new ImageIcon("C:\\Users\\ALLAN JUSTINE\\Downloads\\LogoUi.jpg");
-        Image logoImage = logoIcon.getImage();
-        Image circularLogo = createCircularImage(logoImage, 130);
-        JLabel logoLabel = new JLabel(new ImageIcon(circularLogo));
+        // Logo (fallback if missing)
+        JLabel logoLabel;
+        try {
+            ImageIcon logoIcon = new ImageIcon("D:\\My Documents\\Downloads\\LogoUi.jpg");
+            Image logoImage = logoIcon.getImage();
+            Image circularLogo = createCircularImage(logoImage, 130);
+            logoLabel = new JLabel(new ImageIcon(circularLogo));
+        } catch (Exception e) {
+            logoLabel = new JLabel("No Logo", SwingConstants.CENTER);
+            logoLabel.setFont(new Font("Arial", Font.BOLD, 18));
+            logoLabel.setForeground(Color.GRAY);
+            logoLabel.setOpaque(true);
+            logoLabel.setBackground(Color.LIGHT_GRAY);
+        }
         logoLabel.setBounds(120, 10, 150, 150);
         panel.add(logoLabel);
 
-        // "Login" text label under logo
-        JLabel loginTitle = new JLabel("Login", SwingConstants.CENTER);
-        loginTitle.setFont(new Font("Arial", Font.BOLD, 20));
+        // Centered "Login"
+        JLabel loginTitle = new JLabel("Login");
+        loginTitle.setFont(new Font("Arial", Font.BOLD, 24));
         loginTitle.setForeground(Color.BLACK);
-        loginTitle.setBounds(150, 160, 100, 40);
+        loginTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        loginTitle.setBounds(0, 160, panelWidth, 40);
         panel.add(loginTitle);
 
         // Email
@@ -101,7 +115,7 @@ public class LoginPage {
         loginButton.setBounds(150, 340 + verticalOffset, 100, 30);
         panel.add(loginButton);
 
-        // Register Option
+        // Register
         JLabel registerLabel = new JLabel("Don't have an account?");
         registerLabel.setForeground(Color.BLACK);
         registerLabel.setFont(new Font("Arial", Font.PLAIN, 10));
@@ -128,7 +142,8 @@ public class LoginPage {
         g2d.dispose();
         return circularImage;
     }
-     public static void main(String[] args) {
+
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new LoginPage());
     }
 }
