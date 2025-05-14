@@ -43,11 +43,6 @@ public class MealPlan {
         topPanel.setBackground(null); // Transparent
         frame.add(topPanel);
 
-        JButton backButton = new JButton("<");
-        backButton.setBounds(30, 25, 60, 30);
-        backButton.setBackground(Color.WHITE);
-        topPanel.add(backButton);
-
         JLabel titleLabel = new JLabel("MEAL PLAN");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
         titleLabel.setBounds(110, 20, 300, 40);
