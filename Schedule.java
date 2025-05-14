@@ -43,11 +43,6 @@ public class Schedule {
         topPanel.setBackground(null); 
         frame.add(topPanel);
 
-        JButton backButton = new JButton("<");
-        backButton.setBounds(30, 25, 60, 30);
-        backButton.setBackground(Color.WHITE);
-        topPanel.add(backButton);
-
         JLabel titleLabel = new JLabel("SCHEDULE");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
         titleLabel.setBounds(110, 20, 300, 40);
