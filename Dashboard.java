@@ -40,12 +40,6 @@ public class Dashboard {
         mainPanel.setLayout(null);
         frame.add(mainPanel);
 
-        // backbutton
-        JButton backButton = new JButton("<");
-        backButton.setBackground(Color.WHITE);
-        backButton.setBounds(60, 80, 70, 30);
-        mainPanel.add(backButton);
-
         // Title
         JLabel dashboardTitle = new JLabel("DASHBOARD");
         dashboardTitle.setBackground(Color.WHITE);
