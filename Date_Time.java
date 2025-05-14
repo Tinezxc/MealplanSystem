@@ -41,12 +41,6 @@ public class Date_Time {
         mainPanel.setLayout(null);
         frame.add(mainPanel);
 
-
-        JButton backButton = new JButton("<");
-        backButton.setBounds(50, 45, 50, 30);
-        backButton.setBackground(Color.WHITE);
-        mainPanel.add(backButton);
-
         JLabel titleLabel = new JLabel("SCHEDULE");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
         titleLabel.setBounds(110, 40, 300, 40);
