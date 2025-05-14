@@ -51,12 +51,6 @@ public class Progress {
         mainPanel.setLayout(null);
         frame.add(mainPanel);
 
-        // Back button
-        JButton backButton = new JButton("<");
-        backButton.setBackground(Color.WHITE);
-        backButton.setBounds(20, 60, 60, 30);
-        mainPanel.add(backButton);
-
         // Title
         JLabel titleLabel = new JLabel("PROGRESS TRACKER");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
