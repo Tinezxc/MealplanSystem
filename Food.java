@@ -47,11 +47,6 @@ public class Food {
         topRightPanel.setBounds(0, 0, 1400, 60);
         mainPanel.add(topRightPanel);
 
-        JButton backButton = new JButton("<");
-        backButton.setBounds(20, 25, 60, 30);
-        backButton.setBackground(Color.WHITE);
-        topRightPanel.add(backButton);
-
         JLabel scheduleTitle = new JLabel("FOODS");
         scheduleTitle.setFont(new Font("Arial", Font.BOLD, 28));
         scheduleTitle.setBounds(100, 25, 200, 30);
