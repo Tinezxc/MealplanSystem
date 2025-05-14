@@ -48,11 +48,6 @@ public class UserInfo {
         profilePic.setBounds(100, 30, 120, 120);
         mainPanel.add(profilePic);
 
-        JButton backButton = new JButton("<");
-        backButton.setBackground(Color.WHITE);
-        backButton.setBounds(60, 80, 70, 30);
-        mainPanel.add(backButton);
-
         JLabel dashboardTitle = new JLabel("User Information");
         dashboardTitle.setFont(new Font("Arial", Font.BOLD, 30));
         dashboardTitle.setBounds(150, 70, 300, 50);
