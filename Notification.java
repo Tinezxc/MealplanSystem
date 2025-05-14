@@ -42,12 +42,6 @@ public class Notification {
         mainPanel.setLayout(null);
         frame.add(mainPanel);
 
-        // backbutton
-        JButton backButton = new JButton("<");
-        backButton.setBackground(Color.WHITE);
-        backButton.setBounds(50, 60, 70, 30);
-        mainPanel.add(backButton);
-
         // Title
         JLabel dashboardTitle = new JLabel("DASHBOARD");
         dashboardTitle.setBackground(Color.WHITE);
