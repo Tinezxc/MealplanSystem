@@ -43,7 +43,7 @@ public class Date_Time {
 
         JLabel titleLabel = new JLabel("SCHEDULE");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        titleLabel.setBounds(110, 40, 300, 40);
+        titleLabel.setBounds(20, 40, 300, 40);
         mainPanel.add(titleLabel);
 
         JTextField searchField = new JTextField();
