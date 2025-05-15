@@ -1,16 +1,14 @@
-package com.mycompany.progress;
-
 import javax.swing.*;
 import java.awt.*;
 
-public class Progress {
-    public Progress(String email) {
+public class ProgressTracker {
+    public ProgressTracker(String email) {
 
         JFrame frame = new JFrame("PROGRESS");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1550, 800);
         frame.setLayout(null);
-        
+
         ImageIcon originalIcon = new ImageIcon("C:\\Users\\ALLAN JUSTINE\\Downloads\\LogoUi.jpg");
         Image scaledImage = originalIcon.getImage().getScaledInstance(1550, 800, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
@@ -28,7 +26,6 @@ public class Progress {
         frame.add(leftPanel);
 
         leftPanel.add(Box.createVerticalStrut(150));
-        
 
         String[] navtitle = {"DASHBOARD", "MEAL PLAN", "SCHEDULE", "PROGRESS", "NOTIFICATION"};
         for (String title : navtitle) {
@@ -51,10 +48,16 @@ public class Progress {
         mainPanel.setLayout(null);
         frame.add(mainPanel);
 
+        // Back button
+        JButton backButton = new JButton("<");
+        backButton.setBackground(Color.WHITE);
+        backButton.setBounds(20, 60, 60, 30);
+        mainPanel.add(backButton);
+
         // Title
         JLabel titleLabel = new JLabel("PROGRESS TRACKER");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        titleLabel.setBounds(100, 55, 300, 40);
+        titleLabel.setBounds(100, 55, 400, 40);
         mainPanel.add(titleLabel);
 
         // Search field and buttons
@@ -66,16 +69,35 @@ public class Progress {
         searchButton.setBounds(1140, 55, 100, 30);
         searchButton.setBackground(Color.WHITE);
         mainPanel.add(searchButton);
+        
+        // select food button
+        JButton SelectedFood = new JButton("Select Food");
+        SelectedFood.setBackground(Color.WHITE);
+        SelectedFood.setBounds(1070, 160, 180, 30);
+        mainPanel.add(SelectedFood);
+        
+        //food page
+        SelectedFood.addActionListener(e -> {
+        frame.dispose(); // close current frame if needed
+        new Food(email); // food selection page
+        });
 
         JButton userButton = new JButton("👤");
         userButton.setBounds(1250, 55, 60, 30);
         userButton.setBackground(Color.WHITE);
         mainPanel.add(userButton);
 
-        // Nutrient progress bars
+        // Nutrient data
         String[] nutrients = {"Calories", "Fats", "Protein", "Carbohydrates", "Fiber", "Water Intake"};
-        int[] values = {0, 0, 0, 0, 0, 0};
-        int[] maxValues = {100, 100, 100, 100, 100, 100};
+        int[] values = {1650, 10, 70, 150, 12, 1800}; // actual gain
+        String[] units = {
+                "kcal",        // Calories - kilocalories (energy)
+                "g",           // Fats - grams
+                "g",           // Protein - grams
+                "g",           // Carbohydrates - grams
+                "g",           // Fiber - grams
+               "ml"           // Water Intake - milliliters
+        };
 
         int yPos = 200;
         for (int i = 0; i < nutrients.length; i++) {
@@ -84,8 +106,10 @@ public class Progress {
             nutrientLabel.setBounds(50, yPos, 200, 35);
             mainPanel.add(nutrientLabel);
 
-            JProgressBar progressBar = new JProgressBar(0, maxValues[i]);
+            // Progress bar where max = actual value
+            JProgressBar progressBar = new JProgressBar(0, values[i]);
             progressBar.setValue(values[i]);
+            progressBar.setString(values[i] + " " + units[i]);  // Show actual value instead of %
             progressBar.setStringPainted(true);
             progressBar.setFont(new Font("Arial", Font.PLAIN, 16));
             progressBar.setBounds(250, yPos, 1000, 35);
@@ -99,25 +123,18 @@ public class Progress {
         for (int value : values) {
             totalGain += value;
         }
+        
 
-        JLabel totalGainLabel = new JLabel("Total Gain: " + totalGain + "%");
+
+        JLabel totalGainLabel = new JLabel("Total gain: " + totalGain);
         totalGainLabel.setFont(new Font("Arial", Font.BOLD, 22));
-        totalGainLabel.setBounds(250, yPos + 10, 400, 40);
+        totalGainLabel.setBounds(250, yPos, 400, 40);
         mainPanel.add(totalGainLabel);
 
-        // Update Progress button
-        JButton updateButton = new JButton("Update Progress");
-        updateButton.setFont(new Font("Arial", Font.PLAIN, 18));
-        updateButton.setBackground(Color.WHITE);
-        updateButton.setBounds(50, 680, 250, 40);
-        mainPanel.add(updateButton);
-
         frame.setVisible(true);
-        
-        
     }
 
     public static void main(String[] args) {
-        new Progress("demo@example.com");
+        new ProgressTracker("demo@example.com");
     }
 }
