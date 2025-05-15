@@ -45,7 +45,7 @@ public class MealPlan {
 
         JLabel titleLabel = new JLabel("MEAL PLAN");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        titleLabel.setBounds(110, 20, 300, 40);
+        titleLabel.setBounds(20, 20, 300, 40);
         topPanel.add(titleLabel);
 
         JTextField searchField = new JTextField();
