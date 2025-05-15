@@ -44,7 +44,7 @@ public class Dashboard {
         JLabel dashboardTitle = new JLabel("DASHBOARD");
         dashboardTitle.setBackground(Color.WHITE);
         dashboardTitle.setFont(new Font("Arial", Font.BOLD, 28));
-        dashboardTitle.setBounds(150, 70, 300, 50);
+        dashboardTitle.setBounds(20, 70, 300, 50);
         mainPanel.add(dashboardTitle);
 
         //Search Field and Buttons
