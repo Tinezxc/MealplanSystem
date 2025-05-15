@@ -46,7 +46,7 @@ public class Notification {
         JLabel dashboardTitle = new JLabel("DASHBOARD");
         dashboardTitle.setBackground(Color.WHITE);
         dashboardTitle.setFont(new Font("Arial", Font.BOLD, 28));
-        dashboardTitle.setBounds(130, 50, 300, 50);
+        dashboardTitle.setBounds(20, 50, 300, 50);
         mainPanel.add(dashboardTitle);
 
         //Search Field and Buttons
