@@ -1,3 +1,5 @@
+
+package com.mycompany.food;
 import javax.swing.*;
 import java.awt.*;
 
@@ -48,16 +50,10 @@ public class ProgressTracker {
         mainPanel.setLayout(null);
         frame.add(mainPanel);
 
-        // Back button
-        JButton backButton = new JButton("<");
-        backButton.setBackground(Color.WHITE);
-        backButton.setBounds(20, 60, 60, 30);
-        mainPanel.add(backButton);
-
         // Title
         JLabel titleLabel = new JLabel("PROGRESS TRACKER");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        titleLabel.setBounds(100, 55, 400, 40);
+        titleLabel.setBounds(20, 55, 400, 40);
         mainPanel.add(titleLabel);
 
         // Search field and buttons
