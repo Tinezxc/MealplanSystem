@@ -1,8 +1,9 @@
 package com.mycompany.food;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Food {
     public Food(String email) {
@@ -46,6 +47,11 @@ public class Food {
         topRightPanel.setBackground(Color.WHITE);
         topRightPanel.setBounds(0, 0, 1400, 60);
         mainPanel.add(topRightPanel);
+
+        JButton backButton = new JButton("<");
+        backButton.setBounds(20, 25, 60, 30);
+        backButton.setBackground(Color.WHITE);
+        topRightPanel.add(backButton);
 
         JLabel scheduleTitle = new JLabel("FOODS");
         scheduleTitle.setFont(new Font("Arial", Font.BOLD, 28));
@@ -106,35 +112,93 @@ public class Food {
         mealPlanBox.setPreferredSize(new Dimension(200, 30));
         filterPanel.add(mealPlanBox);
 
-        // Table Section
-        String[] columns = {"ALL ITEMS", "CATEGORIES", "CALORIES", "PROTEIN (g)", "SUGAR (g)", "FAT (g)", "FRUITS"};
-        String[][] data = {
-                {"Chicken Breast", "Protein", "165", "31", "0", "3.6", "No"},
-                {"Salmon", "Protein", "208", "20", "0", "13", "No"},
-                {"Apple", "Fruit", "95", "0.5", "19", "0.3", "Yes"},
-                {"Banana", "Fruit", "105", "1.3", "14", "0.4", "Yes"},
-                {"Brown Rice", "Carb", "216", "5", "0.7", "1.8", "No"},
-                {"Broccoli", "Vegetable", "55", "3.7", "1.7", "0.6", "No"},
-                {"Greek Yogurt", "Dairy", "100", "10", "4", "0.7", "No"},
-                {"Oatmeal", "Carb", "150", "5", "1", "2.5", "No"},
-        };
+        // Scrollable list of food items
+        JPanel foodListPanel = new JPanel();
+        foodListPanel.setLayout(new BoxLayout(foodListPanel, BoxLayout.Y_AXIS));
+        foodListPanel.setBackground(Color.LIGHT_GRAY);
 
-        DefaultTableModel model = new DefaultTableModel(data, columns) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-
-        JTable table = new JTable(model);
-        table.setFillsViewportHeight(true);
-        table.setRowHeight(35);
-        table.setFont(new Font("Arial", Font.PLAIN, 16));
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
-
-        JScrollPane scrollPane = new JScrollPane(table);
+        JScrollPane scrollPane = new JScrollPane(foodListPanel);
         scrollPane.setBounds(20, 180, 1360, 580);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         mainPanel.add(scrollPane);
+
+        // Add header row
+        JPanel headerPanel = new JPanel(null);
+        headerPanel.setPreferredSize(new Dimension(1320, 30));
+        headerPanel.setBackground(Color.LIGHT_GRAY);
+
+        String[] headers = {"FOODS", "CATEGORY", "CALORIES", "PROTEIN", "SUGAR", "FAT", "FRUIT"};
+        int headerX = 130;
+        for (int i = 0; i < headers.length; i++) {
+            JLabel label = new JLabel(headers[i]);
+            label.setBounds(headerX + i * 180, 5, 170, 20);
+            label.setFont(new Font("Arial", Font.BOLD, 12));
+            headerPanel.add(label);
+        }
+        foodListPanel.add(headerPanel);
+
+        // Food data
+        String[][] foodData = {
+            {"Chicken Breast", "Protein", "165", "31", "0", "3.6", "No", "C:\\Users\\THINKPAD\\Downloads\\cb.jpg"},
+            {"Salmon", "Protein", "208", "20", "0", "13", "No", "C:\\Users\\THINKPAD\\Downloads\\slm.jpg"},
+            {"Apple", "Fruit", "95", "0.5", "19", "0.3", "Yes", "src/images/apple.png"},
+            {"Banana", "Fruit", "105", "1.3", "14", "0.4", "Yes", "src/images/banana.png"},
+            {"Brown Rice", "Carb", "216", "5", "0.7", "1.8", "No", "src/images/rice.png"},
+            {"Broccoli", "Vegetable", "55", "3.7", "1.7", "0.6", "No", "src/images/broccoli.png"},
+            {"Greek Yogurt", "Dairy", "100", "10", "4", "0.7", "No", "src/images/yogurt.png"},
+            {"Oatmeal", "Carb", "150", "5", "1", "2.5", "No", "src/images/oatmeal.png"},
+        };
+
+        for (String[] food : foodData) {
+            JPanel foodPanel = new JPanel(null);
+            foodPanel.setPreferredSize(new Dimension(1320, 120));
+            foodPanel.setBackground(Color.white);
+            foodPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+
+            // Load image
+            ImageIcon icon = new ImageIcon(food[7]);
+            Image image = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            JLabel imageLabel = new JLabel(new ImageIcon(image));
+            imageLabel.setBounds(10, 10, 100, 100);
+            foodPanel.add(imageLabel);
+
+            // Horizontal food info layout
+            int xStart = 130;
+            int y = 45;
+            int spacing = 180;
+
+            JLabel name = new JLabel(food[0]);
+            name.setBounds(xStart, y, 150, 20);
+            foodPanel.add(name);
+
+            JLabel category = new JLabel(food[1]);
+            category.setBounds(xStart + spacing, y, 150, 20);
+            foodPanel.add(category);
+
+            JLabel calories = new JLabel(food[2] + " kcal");
+            calories.setBounds(xStart + spacing * 2, y, 100, 20);
+            foodPanel.add(calories);
+
+            JLabel protein = new JLabel(food[3] + "g");
+            protein.setBounds(xStart + spacing * 3, y, 100, 20);
+            foodPanel.add(protein);
+
+            JLabel sugar = new JLabel(food[4] + "g");
+            sugar.setBounds(xStart + spacing * 4, y, 100, 20);
+            foodPanel.add(sugar);
+
+            JLabel fat = new JLabel(food[5] + "g");
+            fat.setBounds(xStart + spacing * 5, y, 100, 20);
+            foodPanel.add(fat);
+
+            JLabel fruits = new JLabel(food[6]);
+            fruits.setBounds(xStart + spacing * 6, y, 100, 20);
+            foodPanel.add(fruits);
+
+
+            foodListPanel.add(Box.createVerticalStrut(10));
+            foodListPanel.add(foodPanel);
+        }
 
         frame.setVisible(true);
     }
