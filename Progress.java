@@ -1,11 +1,10 @@
+package com.mycompany.ui;
 
-package com.mycompany.food;
 import javax.swing.*;
 import java.awt.*;
 
 public class ProgressTracker {
     public ProgressTracker(String email) {
-
         JFrame frame = new JFrame("PROGRESS");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1550, 800);
@@ -43,7 +42,7 @@ public class ProgressTracker {
             leftPanel.add(Box.createVerticalStrut(90));
         }
 
-        // Main panel (right side)
+        // Main panel
         JPanel mainPanel = new JPanel();
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setBounds(150, 0, 1400, 800);
@@ -65,17 +64,23 @@ public class ProgressTracker {
         searchButton.setBounds(1140, 55, 100, 30);
         searchButton.setBackground(Color.WHITE);
         mainPanel.add(searchButton);
-        
-        // select food button
-        JButton SelectedFood = new JButton("Select Food");
-        SelectedFood.setBackground(Color.WHITE);
-        SelectedFood.setBounds(1070, 160, 180, 30);
-        mainPanel.add(SelectedFood);
-        
-        //food page
-        SelectedFood.addActionListener(e -> {
-        frame.dispose(); // close current frame if needed
-        new Food(email); // food selection page
+
+        // Action listener for the search button
+        searchButton.addActionListener(e -> {
+            String searchText = searchField.getText();
+            JOptionPane.showMessageDialog(frame, "Search functionality not implemented for: " + searchText);
+        });
+
+        // Select food button
+        JButton selectedFoodButton = new JButton("Select Food");
+        selectedFoodButton.setBackground(Color.WHITE);
+        selectedFoodButton.setBounds(1070, 160, 180, 30);
+        mainPanel.add(selectedFoodButton);
+
+        // Food page action
+        selectedFoodButton.addActionListener(e -> {
+            frame.dispose();
+            new Food(email); // Assuming Food is another class that handles food selection
         });
 
         JButton userButton = new JButton("👤");
@@ -85,14 +90,14 @@ public class ProgressTracker {
 
         // Nutrient data
         String[] nutrients = {"Calories", "Fats", "Protein", "Carbohydrates", "Fiber", "Water Intake"};
-        int[] values = {1650, 10, 70, 150, 12, 1800}; // actual gain
+        int[] values = {1650, 10, 70, 150, 12, 1800};
         String[] units = {
-                "kcal",        // Calories - kilocalories (energy)
+                "kcal",        // Calories - kilocalories 
                 "g",           // Fats - grams
                 "g",           // Protein - grams
                 "g",           // Carbohydrates - grams
                 "g",           // Fiber - grams
-               "ml"           // Water Intake - milliliters
+                "ml"           // Water Intake - milliliters
         };
 
         int yPos = 200;
@@ -102,10 +107,9 @@ public class ProgressTracker {
             nutrientLabel.setBounds(50, yPos, 200, 35);
             mainPanel.add(nutrientLabel);
 
-            // Progress bar where max = actual value
             JProgressBar progressBar = new JProgressBar(0, values[i]);
             progressBar.setValue(values[i]);
-            progressBar.setString(values[i] + " " + units[i]);  // Show actual value instead of %
+            progressBar.setString(values[i] + " " + units[i]);
             progressBar.setStringPainted(true);
             progressBar.setFont(new Font("Arial", Font.PLAIN, 16));
             progressBar.setBounds(250, yPos, 1000, 35);
@@ -114,15 +118,12 @@ public class ProgressTracker {
             yPos += 60;
         }
 
-        // Total Gain
         int totalGain = 0;
         for (int value : values) {
             totalGain += value;
         }
-        
 
-
-        JLabel totalGainLabel = new JLabel("Total gain: " + totalGain);
+        JLabel totalGainLabel = new JLabel("Total Gain: " + totalGain);
         totalGainLabel.setFont(new Font("Arial", Font.BOLD, 22));
         totalGainLabel.setBounds(250, yPos, 400, 40);
         mainPanel.add(totalGainLabel);
