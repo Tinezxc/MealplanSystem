@@ -1,20 +1,51 @@
-package com.mycompany.food;
+package com.mycompany.ui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+class RoundedBorder extends javax.swing.border.AbstractBorder {
+    private final int radius;
+
+    public RoundedBorder(int radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setColor(Color.black);
+        g2d.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+        g2d.dispose();
+    }
+
+    @Override
+    public Insets getBorderInsets(Component c) {
+        return new Insets(radius, radius, radius, radius);
+    }
+
+    @Override
+    public Insets getBorderInsets(Component c, Insets insets) {
+        insets.set(radius, radius, radius, radius);
+        return insets;
+    }
+}
 
 public class Food {
+    private JPanel foodListPanel;
+
     public Food(String email) {
         JFrame frame = new JFrame("FOODS");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1550, 800);
         frame.setLayout(null);
+        frame.getContentPane().setBackground(new Color(245, 245, 245));
 
         // Left-side panel
         JPanel leftPanel = new JPanel();
-        leftPanel.setBackground(Color.GRAY);
+        leftPanel.setBackground(new Color(40, 40, 40));
         leftPanel.setBounds(0, 0, 150, 800);
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         frame.add(leftPanel);
@@ -27,74 +58,106 @@ public class Food {
             navButton.setAlignmentX(Component.CENTER_ALIGNMENT);
             navButton.setMaximumSize(new Dimension(120, 200));
             navButton.setFocusPainted(false);
-            navButton.setForeground(Color.BLACK);
-            navButton.setBackground(Color.GRAY);
-            navButton.setBorderPainted(false);
-            navButton.setFont(new Font("Arial", Font.PLAIN, 10));
+            navButton.setForeground(Color.WHITE);
+            navButton.setBackground(new Color(60, 60, 60));
+            navButton.setBorder(new RoundedBorder(10));
+            navButton.setFont(new Font("Segoe UI", Font.PLAIN, 11));
             leftPanel.add(navButton);
             leftPanel.add(Box.createVerticalStrut(90));
         }
 
-        // Main Panel
-        JPanel mainPanel = new JPanel();
+        JPanel mainPanel = new JPanel(null);
         mainPanel.setBackground(Color.WHITE);
         mainPanel.setBounds(150, 0, 1400, 800);
-        mainPanel.setLayout(null);
+        mainPanel.setBorder(new RoundedBorder(20));
         frame.add(mainPanel);
-
-        // Top Panel (Search + User)
-        JPanel topRightPanel = new JPanel(null);
-        topRightPanel.setBackground(Color.WHITE);
-        topRightPanel.setBounds(0, 0, 1400, 60);
-        mainPanel.add(topRightPanel);
 
         JLabel scheduleTitle = new JLabel("FOODS");
         scheduleTitle.setFont(new Font("Arial", Font.BOLD, 28));
-        scheduleTitle.setBounds(20, 25, 200, 30);
-        topRightPanel.add(scheduleTitle);
+        scheduleTitle.setBounds(20, 20, 200, 30);
+        mainPanel.add(scheduleTitle);
 
-        JTextField searchField = new JTextField();
-        searchField.setBounds(830, 25, 300, 30);
-        topRightPanel.add(searchField);
+        JButton userButton = new JButton("👤") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        JButton searchButton = new JButton("Search");
-        searchButton.setBounds(1140, 25, 100, 30);
-        searchButton.setBackground(Color.WHITE);
-        topRightPanel.add(searchButton);
+                g2d.setColor(Color.WHITE);
+                g2d.fillOval(0, 0, getWidth(), getHeight());
 
-        JButton userButton = new JButton("👤");
-        userButton.setBounds(1250, 25, 100, 30);
-        userButton.setBackground(Color.WHITE);
-        topRightPanel.add(userButton);
+                g2d.setColor(Color.black);
+                g2d.setStroke(new BasicStroke(1));
+                g2d.drawOval(1, 1, getWidth() - 2, getHeight() - 2);
 
-        // Action Buttons Panel
-        JPanel actionPanel = new JPanel();
-        actionPanel.setBounds(1000, 70, 380, 40);
-        actionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 5));
-        actionPanel.setBackground(Color.WHITE);
-        mainPanel.add(actionPanel);
+                g2d.dispose();
+                super.paintComponent(g);
+            }
 
-        JButton saveButton = new JButton("Save");
-        JButton editButton = new JButton("Edit");
-        JButton deleteButton = new JButton("Delete");
+            @Override
+            public boolean contains(int x, int y) {
+                int radius = getWidth() / 2;
+                int centerX = radius;
+                int centerY = getHeight() / 2;
+                return (Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)) <= Math.pow(radius, 2);
+            }
+        };
 
-        for (JButton btn : new JButton[]{saveButton, editButton, deleteButton}) {
-            btn.setPreferredSize(new Dimension(100, 30));
-            btn.setBackground(Color.WHITE);
+        userButton.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
+        userButton.setBounds(1310, 63, 35, 35);
+        userButton.setFocusPainted(false);
+        userButton.setBorder(BorderFactory.createEmptyBorder());
+        userButton.setContentAreaFilled(false);
+        userButton.setOpaque(false);
+        mainPanel.add(userButton);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        buttonPanel.setBounds(840, 65, 470, 35);
+        buttonPanel.setOpaque(false);
+        mainPanel.add(buttonPanel);
+
+        JButton addButton = new JButton("ADD");
+        JButton saveButton = new JButton("SAVE");
+        JButton editButton = new JButton("EDIT");
+        JButton deleteButton = new JButton("DELETE");
+
+        for (JButton btn : new JButton[]{addButton, saveButton, editButton, deleteButton}) {
+            btn.setPreferredSize(new Dimension(70, 30));
             btn.setFocusPainted(false);
-            actionPanel.add(btn);
+            btn.setBackground(Color.WHITE);
+            btn.setBorder(new RoundedBorder(10));
+            btn.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            buttonPanel.add(btn);
         }
 
-        // Filters Panel
-        JPanel filterPanel = new JPanel();
+        // Action listeners for buttons
+        addButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog(frame, "Add functionality not implemented yet.");
+        });
+
+        saveButton.addActionListener(e -> {
+            JOptionPane.showMessageDialog(frame, "Food list saved successfully.");
+        });
+
+        editButton.addActionListener(e -> {
+            // Logic to edit the selected food item can be implemented here
+            JOptionPane.showMessageDialog(frame, "Edit functionality not implemented yet.");
+        });
+
+        deleteButton.addActionListener(e -> {
+            // Logic to delete the selected food item can be implemented here
+            JOptionPane.showMessageDialog(frame, "Delete functionality not implemented yet.");
+        });
+
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         filterPanel.setBounds(20, 120, 1360, 50);
-        filterPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 10));
         filterPanel.setBackground(Color.WHITE);
         mainPanel.add(filterPanel);
 
         filterPanel.add(new JLabel("ALL ITEMS:"));
         JTextField allItemsField = new JTextField("Search food...");
         allItemsField.setPreferredSize(new Dimension(200, 30));
+        allItemsField.setBorder(new RoundedBorder(10));
         filterPanel.add(allItemsField);
 
         filterPanel.add(new JLabel("CATEGORIES:"));
@@ -103,36 +166,47 @@ public class Food {
         filterPanel.add(categoryBox);
 
         filterPanel.add(new JLabel("MEAL PLAN:"));
-        JComboBox<String> mealPlanBox = new JComboBox<>(new String[]{"Breakfast", "Snack1", "Lunch", "Snack2", "Dinner"});
+        JComboBox<String> mealPlanBox = new JComboBox<>(new String[]{"Breakfast", "Lunch", "Dinner", "Snack"});
         mealPlanBox.setPreferredSize(new Dimension(200, 30));
         filterPanel.add(mealPlanBox);
 
-        // Scrollable list of food items
-        JPanel foodListPanel = new JPanel();
-        foodListPanel.setLayout(new BoxLayout(foodListPanel, BoxLayout.Y_AXIS));
-        foodListPanel.setBackground(Color.LIGHT_GRAY);
+        JPanel headerPanel = new JPanel(null) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        JScrollPane scrollPane = new JScrollPane(foodListPanel);
-        scrollPane.setBounds(20, 180, 1360, 580);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-        mainPanel.add(scrollPane);
+                g2d.setColor(new Color(211, 211, 211));  // Light gray background color
+                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
 
-        // Add header row
-        JPanel headerPanel = new JPanel(null);
-        headerPanel.setPreferredSize(new Dimension(1320, 30));
-        headerPanel.setBackground(Color.LIGHT_GRAY);
+                g2d.dispose();
+            }
+        };
+        headerPanel.setBounds(20, 180, 1360, 30);
+        headerPanel.setOpaque(false);
 
         String[] headers = {"FOODS", "CATEGORY", "CALORIES", "PROTEIN", "SUGAR", "FAT", "FRUIT"};
         int headerX = 130;
         for (int i = 0; i < headers.length; i++) {
             JLabel label = new JLabel(headers[i]);
             label.setBounds(headerX + i * 180, 5, 170, 20);
-            label.setFont(new Font("Arial", Font.BOLD, 12));
+            label.setFont(new Font("Arial", Font.BOLD, 15));
             headerPanel.add(label);
         }
-        foodListPanel.add(headerPanel);
+        mainPanel.add(headerPanel);
 
-        // Food data
+        foodListPanel = new JPanel();
+        foodListPanel.setLayout(new BoxLayout(foodListPanel, BoxLayout.Y_AXIS));
+        foodListPanel.setBackground(Color.LIGHT_GRAY);
+
+        JScrollPane scrollPane = new JScrollPane(foodListPanel);
+        scrollPane.setBounds(20, 210, 1360, 550);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setBorder(new RoundedBorder(15));
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        mainPanel.add(scrollPane);
+
         String[][] foodData = {
             {"Chicken Breast", "Protein", "165", "31", "0", "3.6", "No", "C:\\Users\\THINKPAD\\Downloads\\cb.jpg"},
             {"Salmon", "Protein", "208", "20", "0", "13", "No", "C:\\Users\\THINKPAD\\Downloads\\slm.jpg"},
@@ -148,54 +222,37 @@ public class Food {
             JPanel foodPanel = new JPanel(null);
             foodPanel.setPreferredSize(new Dimension(1320, 120));
             foodPanel.setBackground(Color.white);
-            foodPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+            foodPanel.setBorder(BorderFactory.createCompoundBorder(
+                new RoundedBorder(15),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            ));
 
-            // Load image
             ImageIcon icon = new ImageIcon(food[7]);
             Image image = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
             JLabel imageLabel = new JLabel(new ImageIcon(image));
             imageLabel.setBounds(10, 10, 100, 100);
             foodPanel.add(imageLabel);
 
-            // Horizontal food info layout
-            int xStart = 130;
-            int y = 45;
-            int spacing = 180;
-
-            JLabel name = new JLabel(food[0]);
-            name.setBounds(xStart, y, 150, 20);
-            foodPanel.add(name);
-
-            JLabel category = new JLabel(food[1]);
-            category.setBounds(xStart + spacing, y, 150, 20);
-            foodPanel.add(category);
-
-            JLabel calories = new JLabel(food[2] + " kcal");
-            calories.setBounds(xStart + spacing * 2, y, 100, 20);
-            foodPanel.add(calories);
-
-            JLabel protein = new JLabel(food[3] + "g");
-            protein.setBounds(xStart + spacing * 3, y, 100, 20);
-            foodPanel.add(protein);
-
-            JLabel sugar = new JLabel(food[4] + "g");
-            sugar.setBounds(xStart + spacing * 4, y, 100, 20);
-            foodPanel.add(sugar);
-
-            JLabel fat = new JLabel(food[5] + "g");
-            fat.setBounds(xStart + spacing * 5, y, 100, 20);
-            foodPanel.add(fat);
-
-            JLabel fruits = new JLabel(food[6]);
-            fruits.setBounds(xStart + spacing * 6, y, 100, 20);
-            foodPanel.add(fruits);
-
+            int xStart = 130, y = 45, spacing = 180;
+            foodPanel.add(createLabel(food[0], xStart, y));
+            foodPanel.add(createLabel(food[1], xStart + spacing, y));
+            foodPanel.add(createLabel(food[2] + " kcal", xStart + spacing * 2, y));
+            foodPanel.add(createLabel(food[3] + "g", xStart + spacing * 3, y));
+            foodPanel.add(createLabel(food[4] + "g", xStart + spacing * 4, y));
+            foodPanel.add(createLabel(food[5] + "g", xStart + spacing * 5, y));
+            foodPanel.add(createLabel(food[6], xStart + spacing * 6, y));
 
             foodListPanel.add(Box.createVerticalStrut(10));
             foodListPanel.add(foodPanel);
         }
 
         frame.setVisible(true);
+    }
+
+    private JLabel createLabel(String text, int x, int y) {
+        JLabel label = new JLabel(text);
+        label.setBounds(x, y, 150, 20);
+        return label;
     }
 
     public static void main(String[] args) {
