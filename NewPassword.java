@@ -1,8 +1,8 @@
-
-package com.mycompany.loginpage;
+package com.mycompany.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 public class NewPassword {
     public NewPassword(String email) {
@@ -11,7 +11,7 @@ public class NewPassword {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
 
-        ImageIcon originalIcon = new ImageIcon("C:\\Users\\ALLAN JUSTINE\\Downloads\\BackGroundUI.png");
+        ImageIcon originalIcon = new ImageIcon("C:\\Users\\THINKPAD\\Downloads\\bg.png");
         Image scaledImage = originalIcon.getImage().getScaledInstance(1550, 800, Image.SCALE_SMOOTH);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
 
@@ -79,7 +79,37 @@ public class NewPassword {
         backToLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         panel.add(backToLogin);
 
+        // Password reset logic
+        resetButton.addActionListener(e -> {
+            String newPassword = new String(newPasswordField.getPassword()).trim();
+            String confirmPassword = new String(confirmPasswordField.getPassword()).trim();
+
+            if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Please fill in all fields.");
+                return;
+            }
+
+            if (!newPassword.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(frame, "Passwords do not match.");
+                return;
+            }
+
+            // TODO: Replace this simulated update with real DB update logic
+            System.out.println("Password for " + email + " updated to: " + newPassword);
+            JOptionPane.showMessageDialog(frame, "Password updated successfully!");
+
+            new LoginPage(); // Go back to login screen
+            frame.dispose();
+        });
+
+        backToLogin.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                new LoginPage();
+                frame.dispose();
+            }
+        });
+
         frame.setVisible(true);
     }
-    
+
 }
