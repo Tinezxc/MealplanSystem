@@ -1,40 +1,30 @@
 package com.mycompany.ui;
 
 import database.DatabaseConnection;
-import com.mycompany.model.User;
-import dao.UserDAO;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.image.BufferedImage;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Random;
 
-public class RegistrationPage {
-
-    private JTextField fullNameField;
-    private JTextField usernameField;
-    private JTextField emailField;
-    private JPasswordField passwordField;
-
-    public RegistrationPage() {
-        JFrame frame = new JFrame("Registration Page");
+public class ForgotPassword {
+    public ForgotPassword() {
+        JFrame frame = new JFrame("Forgot Password");
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = screenSize.width;
         int screenHeight = screenSize.height;
         frame.setSize(screenWidth, screenHeight);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
-        frame.setResizable(true);
 
         ImageIcon originalIcon = new ImageIcon("C:\\Users\\THINKPAD\\Downloads\\bg.png");
-        JLabel background = new JLabel();
-        background.setLayout(null);
+        Image scaledImage = originalIcon.getImage().getScaledInstance(screenWidth, screenHeight, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+        JLabel background = new JLabel(scaledIcon);
+        background.setBounds(0, 0, screenWidth, screenHeight);
         frame.setContentPane(background);
+        background.setLayout(null);
 
         JPanel panel = new JPanel() {
             @Override
@@ -48,106 +38,89 @@ public class RegistrationPage {
         };
 
         int panelWidth = 400;
-        int panelHeight = 500;
-        int xPos = (screenWidth - panelWidth) / 2;
-        int yPos = (screenHeight - panelHeight) / 2;
-        panel.setBounds(xPos, yPos, panelWidth, panelHeight);
+        int panelHeight = 300;
+        panel.setBounds((screenWidth - panelWidth) / 2, (screenHeight - panelHeight) / 2, panelWidth, panelHeight);
         panel.setLayout(null);
         background.add(panel);
 
-        // Circular logo
-        ImageIcon logoIcon = new ImageIcon("C:\\Users\\THINKPAD\\Downloads\\LOGO.jpg");
-        Image logoImage = logoIcon.getImage();
-        Image circularLogo = createCircularImage(logoImage, 130);
-        JLabel logoLabel = new JLabel(new ImageIcon(circularLogo));
-        logoLabel.setBounds(120, 4, 150, 150);
-        panel.add(logoLabel);
+        JLabel titleLabel = new JLabel("FORGOT PASSWORD", SwingConstants.CENTER);
+        titleLabel.setForeground(Color.BLACK);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        titleLabel.setBounds(70, 50, 250, 20);
+        panel.add(titleLabel);
 
-        JLabel registerTitle = new JLabel("Register", SwingConstants.CENTER);
-        registerTitle.setFont(new Font("Arial", Font.BOLD, 20));
-        registerTitle.setForeground(Color.BLACK);
-        registerTitle.setBounds(150, 140, 100, 40);
-        panel.add(registerTitle);
+        JLabel emailLabel = new JLabel("Enter your Email:");
+        emailLabel.setForeground(Color.BLACK);
+        emailLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        emailLabel.setBounds(50, 110, 300, 20);
+        panel.add(emailLabel);
 
-        // Add input fields
-        addLabelAndField(panel, "Full Name:", 170, 190, false);
-        addLabelAndField(panel, "Username:", 230, 250, false);
-        addLabelAndField(panel, "Email:", 290, 310, false);
-        addLabelAndField(panel, "Password:", 350, 370, true);
+        JTextField emailField = new JTextField();
+        emailField.setBounds(50, 135, 300, 30);
+        panel.add(emailField);
 
-        JButton registerButton = new JButton("Next");
-        registerButton.setForeground(Color.WHITE);
-        registerButton.setBackground(Color.BLACK);
-        registerButton.setBounds(150, 420, 100, 30);
-        panel.add(registerButton);
+        JButton resetButton = new JButton("Send Code");
+        resetButton.setForeground(Color.WHITE);
+        resetButton.setBackground(Color.BLACK);
+        resetButton.setFont(new Font("Arial", Font.PLAIN, 12));
+        resetButton.setBounds(130, 180, 140, 30);
+        panel.add(resetButton);
 
-        registerButton.addActionListener(e -> {
-            String fullName = fullNameField.getText().trim();
-            String username = usernameField.getText().trim();
-            String email = emailField.getText().trim();
-            String password = new String(passwordField.getPassword()).trim();
+        JLabel backToLogin = new JLabel("Back to Login", SwingConstants.CENTER);
+        backToLogin.setForeground(Color.BLUE);
+        backToLogin.setFont(new Font("Arial", Font.PLAIN, 10));
+        backToLogin.setBounds(150, 220, 100, 20);
+        backToLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        panel.add(backToLogin);
 
-            if (fullName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+        resetButton.addActionListener(e -> {
+            String email = emailField.getText().trim().toLowerCase();
 
-            if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-                JOptionPane.showMessageDialog(frame, "Please enter a valid email address.", "Invalid Email", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            if (password.length() < 6) {
-                JOptionPane.showMessageDialog(frame, "Password must be at least 6 characters long.", "Weak Password", JOptionPane.WARNING_MESSAGE);
+            if (email.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Please enter your email.");
                 return;
             }
 
             try (Connection conn = DatabaseConnection.getConnection()) {
-                UserDAO userDAO = new UserDAO(conn);
+                String query = "SELECT * FROM users WHERE LOWER(email) = ?";
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setString(1, email);
+                ResultSet rs = stmt.executeQuery();
 
-                String checkQuery = "SELECT * FROM users WHERE email = ?";
-                PreparedStatement checkStmt = conn.prepareStatement(checkQuery);
-                checkStmt.setString(1, email);
-                ResultSet rs = checkStmt.executeQuery();
-
-                if (rs.next()) {
-                    JOptionPane.showMessageDialog(frame, "Email already registered.", "Registration Error", JOptionPane.ERROR_MESSAGE);
+                if (!rs.next()) {
+                    JOptionPane.showMessageDialog(frame, "No account found with that email.");
                     return;
                 }
 
-                User user = new User(email, fullName);
-                user.setFullName(fullName);
-                user.setUsername(username);
-                user.setEmail(email);
-                user.setPassword(password);
+                // Generate a 6-digit code
+                String code = String.format("%06d", new Random().nextInt(999999));
 
-                boolean success = userDAO.saveUser(user);
-                if (success) {
-                    JOptionPane.showMessageDialog(frame, "Registration successful! Proceeding to next form.");
-                    frame.dispose();
-                    new FillUpForm(user); // Replace with LoginPage() if you prefer
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Registration failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                // Send email
+                String subject = "Password Reset Code";
+                String message = "Your verification code is: " + code;
+
+                String senderEmail = "neverdd.11@gmail.com";
+                String appPassword = "mfmtnysykkbviqup";
+
+                EmailService emailService = new EmailService(senderEmail, appPassword);
+                emailService.sendEmail(email, subject, message);
+
+                JOptionPane.showMessageDialog(frame, "Verification code sent to your email.");
+
+                // Move to verification screen
+                new EmailVerification(email, code);
+                frame.dispose();
 
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(frame, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Database error: " + ex.getMessage());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Failed to send email: " + ex.getMessage());
             }
         });
 
-        JLabel alreadyAccountLabel = new JLabel("Already have an account?");
-        alreadyAccountLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-        alreadyAccountLabel.setBounds(125, 460, 150, 20);
-        panel.add(alreadyAccountLabel);
-
-        JLabel loginLabel = new JLabel("Login");
-        loginLabel.setForeground(Color.BLUE);
-        loginLabel.setFont(new Font("Arial", Font.PLAIN, 10));
-        loginLabel.setBounds(250, 460, 50, 20);
-        panel.add(loginLabel);
-
-        loginLabel.addMouseListener(new MouseAdapter() {
+        backToLogin.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 new LoginPage();
                 frame.dispose();
@@ -158,57 +131,17 @@ public class RegistrationPage {
             public void componentResized(ComponentEvent e) {
                 int frameWidth = frame.getWidth();
                 int frameHeight = frame.getHeight();
-                Image scaledImage = originalIcon.getImage().getScaledInstance(frameWidth, frameHeight, Image.SCALE_SMOOTH);
-                background.setIcon(new ImageIcon(scaledImage));
+                Image scaledImage1 = originalIcon.getImage().getScaledInstance(frameWidth, frameHeight, Image.SCALE_SMOOTH);
+                background.setIcon(new ImageIcon(scaledImage1));
                 background.setBounds(0, 0, frameWidth, frameHeight);
-                centerPanel(panel, frame, panelWidth, panelHeight);
+                panel.setLocation((frameWidth - panelWidth) / 2, (frameHeight - panelHeight) / 2);
             }
         });
 
         frame.setVisible(true);
     }
 
-    private void centerPanel(JPanel panel, JFrame frame, int panelWidth, int panelHeight) {
-        int frameWidth = frame.getWidth();
-        int frameHeight = frame.getHeight();
-        panel.setLocation((frameWidth - panelWidth) / 2, (frameHeight - panelHeight) / 2);
-    }
-
-    private void addLabelAndField(JPanel panel, String labelText, int labelY, int fieldY, boolean isPassword) {
-        JLabel label = new JLabel(labelText);
-        label.setBounds(50, labelY, 300, 20);
-        panel.add(label);
-
-        JTextField field;
-        if (isPassword) {
-            passwordField = new JPasswordField();
-            passwordField.setBounds(50, fieldY, 300, 30);
-            panel.add(passwordField);
-        } else {
-            field = new JTextField();
-            field.setBounds(50, fieldY, 300, 30);
-            panel.add(field);
-
-            switch (labelText) {
-                case "Full Name:" -> fullNameField = field;
-                case "Username:" -> usernameField = field;
-                case "Email:" -> emailField = field;
-            }
-        }
-    }
-
-    private Image createCircularImage(Image image, int diameter) {
-        BufferedImage circularImage = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = circularImage.createGraphics();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Ellipse2D.Double clip = new Ellipse2D.Double(0, 0, diameter, diameter);
-        g2d.setClip(clip);
-        g2d.drawImage(image, 0, 0, diameter, diameter, null);
-        g2d.dispose();
-        return circularImage;
-    }
-
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(RegistrationPage::new);
+        SwingUtilities.invokeLater(ForgotPassword::new);
     }
 }
