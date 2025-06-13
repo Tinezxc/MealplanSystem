@@ -2,6 +2,7 @@ package com.mycompany.ui;
 
 import database.DatabaseConnection;
 import com.mycompany.model.User;
+import dao.UserDAO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +13,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import dao.UserDAO;
 
 public class RegistrationPage {
 
@@ -55,7 +55,7 @@ public class RegistrationPage {
         panel.setLayout(null);
         background.add(panel);
 
-        // Logo
+        // Circular logo
         ImageIcon logoIcon = new ImageIcon("C:\\Users\\THINKPAD\\Downloads\\LOGO.jpg");
         Image logoImage = logoIcon.getImage();
         Image circularLogo = createCircularImage(logoImage, 130);
@@ -63,12 +63,13 @@ public class RegistrationPage {
         logoLabel.setBounds(120, 4, 150, 150);
         panel.add(logoLabel);
 
-        JLabel loginTitle = new JLabel("Register", SwingConstants.CENTER);
-        loginTitle.setFont(new Font("Arial", Font.BOLD, 20));
-        loginTitle.setForeground(Color.BLACK);
-        loginTitle.setBounds(150, 140, 100, 40);
-        panel.add(loginTitle);
+        JLabel registerTitle = new JLabel("Register", SwingConstants.CENTER);
+        registerTitle.setFont(new Font("Arial", Font.BOLD, 20));
+        registerTitle.setForeground(Color.BLACK);
+        registerTitle.setBounds(150, 140, 100, 40);
+        panel.add(registerTitle);
 
+        // Add input fields
         addLabelAndField(panel, "Full Name:", 170, 190, false);
         addLabelAndField(panel, "Username:", 230, 250, false);
         addLabelAndField(panel, "Email:", 290, 310, false);
@@ -81,61 +82,59 @@ public class RegistrationPage {
         panel.add(registerButton);
 
         registerButton.addActionListener(e -> {
-    String fullName = fullNameField.getText().trim();
-    String username = usernameField.getText().trim();
-    String email = emailField.getText().trim();
-    String password = new String(passwordField.getPassword()).trim();
+            String fullName = fullNameField.getText().trim();
+            String username = usernameField.getText().trim();
+            String email = emailField.getText().trim();
+            String password = new String(passwordField.getPassword()).trim();
 
-    if (fullName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-        JOptionPane.showMessageDialog(frame, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
+            if (fullName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-    if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-        JOptionPane.showMessageDialog(frame, "Please enter a valid email address.", "Invalid Email", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
+            if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+                JOptionPane.showMessageDialog(frame, "Please enter a valid email address.", "Invalid Email", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-    if (password.length() < 6) {
-        JOptionPane.showMessageDialog(frame, "Password must be at least 6 characters long.", "Weak Password", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
+            if (password.length() < 6) {
+                JOptionPane.showMessageDialog(frame, "Password must be at least 6 characters long.", "Weak Password", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-    try (Connection conn = DatabaseConnection.getConnection()) {
-        UserDAO userDAO = new UserDAO(conn);
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                UserDAO userDAO = new UserDAO(conn);
 
-        // Check if email already exists
-        String checkQuery = "SELECT * FROM users WHERE email = ?";
-        PreparedStatement checkStmt = conn.prepareStatement(checkQuery);
-        checkStmt.setString(1, email);
-        ResultSet rs = checkStmt.executeQuery();
+                String checkQuery = "SELECT * FROM users WHERE email = ?";
+                PreparedStatement checkStmt = conn.prepareStatement(checkQuery);
+                checkStmt.setString(1, email);
+                ResultSet rs = checkStmt.executeQuery();
 
-        if (rs.next()) {
-            JOptionPane.showMessageDialog(frame, "Email already registered.", "Registration Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+                if (rs.next()) {
+                    JOptionPane.showMessageDialog(frame, "Email already registered.", "Registration Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
-        // Create and save the user
-        User user = new User(email, fullName);
-        user.setFullName(fullName);
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(password);
+                User user = new User(email, fullName);
+                user.setFullName(fullName);
+                user.setUsername(username);
+                user.setEmail(email);
+                user.setPassword(password);
 
-        boolean success = userDAO.saveUser(user);
-        if (success) {
-            JOptionPane.showMessageDialog(frame, "Registration successful! Proceeding to next form.");
-            frame.dispose();
-            new FillUpForm(user);  // ← Make sure FillUpForm accepts a User object
-        } else {
-            JOptionPane.showMessageDialog(frame, "Registration failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+                boolean success = userDAO.saveUser(user);
+                if (success) {
+                    JOptionPane.showMessageDialog(frame, "Registration successful! Proceeding to next form.");
+                    frame.dispose();
+                    new FillUpForm(user); // Replace with LoginPage() if you prefer
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Registration failed. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
 
-    } catch (SQLException ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(frame, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    }
-});
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Database error: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
         JLabel alreadyAccountLabel = new JLabel("Already have an account?");
         alreadyAccountLabel.setFont(new Font("Arial", Font.PLAIN, 10));
@@ -149,7 +148,6 @@ public class RegistrationPage {
         panel.add(loginLabel);
 
         loginLabel.addMouseListener(new MouseAdapter() {
-            @Override
             public void mouseClicked(MouseEvent e) {
                 new LoginPage();
                 frame.dispose();
@@ -157,7 +155,6 @@ public class RegistrationPage {
         });
 
         frame.addComponentListener(new ComponentAdapter() {
-            @Override
             public void componentResized(ComponentEvent e) {
                 int frameWidth = frame.getWidth();
                 int frameHeight = frame.getHeight();
