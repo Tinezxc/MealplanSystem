@@ -3,6 +3,7 @@ package com.mycompany.ui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.*;
 
 public class NewPassword {
     public NewPassword(String email) {
@@ -36,7 +37,6 @@ public class NewPassword {
         int yPos = (frame.getHeight() - panelHeight) / 2;
         panel.setBounds(xPos, yPos, panelWidth, panelHeight);
         panel.setLayout(null);
-
         background.add(panel);
 
         JLabel titleLabel = new JLabel("NEW PASSWORD", SwingConstants.CENTER);
@@ -79,10 +79,11 @@ public class NewPassword {
         backToLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         panel.add(backToLogin);
 
-        // Password reset logic
+        // Handle password reset logic
         resetButton.addActionListener(e -> {
             String newPassword = new String(newPasswordField.getPassword()).trim();
             String confirmPassword = new String(confirmPasswordField.getPassword()).trim();
+            String trimmedEmail = email.trim(); // ensure clean email
 
             if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
                 JOptionPane.showMessageDialog(frame, "Please fill in all fields.");
@@ -94,12 +95,32 @@ public class NewPassword {
                 return;
             }
 
-            // TODO: Replace this simulated update with real DB update logic
-            System.out.println("Password for " + email + " updated to: " + newPassword);
-            JOptionPane.showMessageDialog(frame, "Password updated successfully!");
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/prototype", "root", "");
 
-            new LoginPage(); // Go back to login screen
-            frame.dispose();
+                // Use LOWER(email) to handle case-insensitivity
+                String sql = "UPDATE users SET password = ? WHERE LOWER(email) = LOWER(?)";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, newPassword);  // In production: hash the password!
+                ps.setString(2, trimmedEmail);
+
+                int rowsAffected = ps.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(frame, "Password updated successfully!");
+                    new LoginPage();
+                    frame.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(frame, "No user found with that email.");
+                }
+
+                ps.close();
+                conn.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "Error: " + ex.getMessage());
+            }
         });
 
         backToLogin.addMouseListener(new MouseAdapter() {
@@ -111,5 +132,4 @@ public class NewPassword {
 
         frame.setVisible(true);
     }
-
 }
