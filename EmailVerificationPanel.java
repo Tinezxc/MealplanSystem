@@ -6,11 +6,12 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 
-
 public class EmailVerification {
     private final String sentCode;
+    private final String email;  // ✅ Store user's actual email
 
     public EmailVerification(String email, String sentCode) {
+        this.email = email;      // ✅ Assign email
         this.sentCode = sentCode;
 
         JFrame frame = new JFrame("Email Verification");
@@ -71,19 +72,18 @@ public class EmailVerification {
         panel.add(verifyButton);
 
         verifyButton.addActionListener(e -> {
-    if (codeField.getText().trim().equals(sentCode)) {
-        JOptionPane.showMessageDialog(frame, "Verification successful! You can now change your password.");
-        new NewPassword("demo@example.com");  // Pass actual user email here
-        frame.dispose();
-    } else {
-        JOptionPane.showMessageDialog(frame, "Incorrect verification code.");
-    }
-});
-
+            String enteredCode = codeField.getText().trim();
+            if (enteredCode.equals(sentCode)) {
+                JOptionPane.showMessageDialog(frame, "Verification successful! You can now change your password.");
+                new NewPassword(email);  // ✅ Pass correct email
+                frame.dispose();
+            } else {
+                JOptionPane.showMessageDialog(frame, "Incorrect verification code.");
+            }
+        });
 
         frame.setVisible(true);
     }
-
 
     // Method to create a circular image (used for the logo)
     private Image createCircularImage(Image image, int diameter) {
@@ -96,5 +96,4 @@ public class EmailVerification {
         g2d.dispose();
         return circularImage;
     }
-
 }
