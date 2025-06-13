@@ -5,6 +5,8 @@ import javax.swing.border.AbstractBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Schedule {
     private static final String[] DAYS = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
@@ -45,30 +47,41 @@ public class Schedule {
         frame.setSize(1550, 800);
         frame.setLayout(null);
 
-        // Left-side panel
         JPanel leftPanel = new JPanel();
         leftPanel.setBackground(new Color(40, 40, 40));
         leftPanel.setBounds(0, 0, 150, 800);
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         frame.add(leftPanel);
 
-        leftPanel.add(Box.createVerticalStrut(150));
+        leftPanel.add(Box.createVerticalStrut(200));
 
         String[] navtitle = {"DASHBOARD", "MEAL PLAN", "SCHEDULE", "PROGRESS", "NOTIFICATION"};
         for (String title : navtitle) {
             JButton navButton = new JButton(title);
             navButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            navButton.setMaximumSize(new Dimension(120, 200));
+            navButton.setMaximumSize(new Dimension(120, 40));
             navButton.setFocusPainted(false);
             navButton.setForeground(Color.WHITE);
             navButton.setBackground(new Color(60, 60, 60));
-            navButton.setBorder(new RoundedBorder(10));
             navButton.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+            navButton.setBorder(new RoundedBorder(10));
+
+            navButton.addActionListener(e -> {
+                frame.dispose();
+                switch (title) {
+                    case "DASHBOARD": new Dashboard(email); break;
+                    case "MEAL PLAN": new MealPlan(email); break;
+                    case "SCHEDULE": new Schedule(email); break;
+                    case "PROGRESS": new ProgressTracker(email); break;
+                    case "NOTIFICATION": new Notification(email); break;
+                    default: JOptionPane.showMessageDialog(null, "Coming soon!");
+                }
+            });
+
             leftPanel.add(navButton);
-            leftPanel.add(Box.createVerticalStrut(90));
+            leftPanel.add(Box.createVerticalStrut(70));
         }
 
-        // Top Panel
         JPanel topPanel = new JPanel(null);
         topPanel.setBounds(150, 0, 1400, 100);
         topPanel.setOpaque(false);
@@ -103,19 +116,12 @@ public class Schedule {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2d = (Graphics2D) g.create();
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // user circle background
                 g2d.setColor(Color.WHITE);
                 g2d.fillOval(0, 0, getWidth(), getHeight());
-
-                // border circle
                 g2d.setColor(Color.black);
                 g2d.setStroke(new BasicStroke(1));
                 g2d.drawOval(1, 1, getWidth() - 2, getHeight() - 2);
-
                 g2d.dispose();
-
-                // Draw the icon/text on top
                 super.paintComponent(g);
             }
 
@@ -135,8 +141,13 @@ public class Schedule {
         userButton.setContentAreaFilled(false);
         userButton.setOpaque(false);
         topPanel.add(userButton);
+        
+        userButton.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                new UserInfo(email); // Open Forgot Password screen on click
+            }
+        });
 
-        // Action Buttons Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         buttonPanel.setBounds(875, 65, 470, 35);
         buttonPanel.setOpaque(false);
@@ -156,12 +167,10 @@ public class Schedule {
             buttonPanel.add(btn);
         }
 
-        // Meal Grid Section
         JPanel mealPanel = new JPanel(new BorderLayout());
         mealPanel.setBounds(200, 110, 1290, 640);
         frame.add(mealPanel);
 
-        // Header Panel
         JPanel headerPanel = new JPanel(new GridLayout(1, MEALS.length + 1, 20, 20));
         headerPanel.setOpaque(false);
 
@@ -193,7 +202,7 @@ public class Schedule {
                 mealButton.setBackground(Color.WHITE);
                 mealButton.setBorder(new RoundedBorder(10));
                 mealButton.setPreferredSize(new Dimension(80, 40));
-                mealButton.addActionListener(new MealButtonActionListener(day, MEALS[j])); // Add action listener
+                mealButton.addActionListener(new MealButtonActionListener(day, MEALS[j]));
                 gridPanel.add(mealButton);
             }
         }
@@ -201,31 +210,14 @@ public class Schedule {
         mealPanel.add(headerPanel, BorderLayout.NORTH);
         mealPanel.add(gridPanel, BorderLayout.CENTER);
 
-        // Action listeners for buttons
-        addButton.addActionListener(e -> {
-            // Logic to add a meal can be implemented here
-            JOptionPane.showMessageDialog(frame, "Add Meal functionality to be implemented.");
-        });
-
-        saveButton.addActionListener(e -> {
-            // Logic to save the schedule can be implemented here
-            JOptionPane.showMessageDialog(frame, "Save Schedule functionality to be implemented.");
-        });
-
-        editButton.addActionListener(e -> {
-            // Logic to edit a selected meal can be implemented here
-            JOptionPane.showMessageDialog(frame, "Edit Meal functionality to be implemented.");
-        });
-
-        deleteButton.addActionListener(e -> {
-            // Logic to delete a selected meal can be implemented here
-            JOptionPane.showMessageDialog(frame, "Delete Meal functionality to be implemented.");
-        });
+        addButton.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Add Meal functionality to be implemented."));
+        saveButton.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Save Schedule functionality to be implemented."));
+        editButton.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Edit Meal functionality to be implemented."));
+        deleteButton.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Delete Meal functionality to be implemented."));
 
         frame.setVisible(true);
     }
 
-    // Action listener for meal buttons
     private class MealButtonActionListener implements ActionListener {
         private final String day;
         private final String meal;
@@ -237,7 +229,6 @@ public class Schedule {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Logic to handle meal button click
             JOptionPane.showMessageDialog(null, "Meal added for " + day + ": " + meal);
         }
     }
