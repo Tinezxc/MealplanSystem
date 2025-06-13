@@ -3,11 +3,12 @@ package com.mycompany.ui;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Dashboard {
 
     public Dashboard(String email) {
-        // Anti-aliasing for better UI rendering
         UIManager.put("Button.focus", new Color(0, 0, 0, 0));
 
         JFrame frame = new JFrame("Dashboard");
@@ -61,7 +62,7 @@ public class Dashboard {
 
     leftPanel.add(navButton);
     leftPanel.add(Box.createVerticalStrut(70));
-}
+    }
 
 
         // === Main Panel ===
@@ -79,7 +80,7 @@ public class Dashboard {
 
         // === Search Bar Panel with emoji on right ===
         JPanel searchPanel = new JPanel(new BorderLayout());
-        searchPanel.setBounds(860, 70, 330, 35);  // reduced width & height, moved slightly right
+        searchPanel.setBounds(860, 70, 330, 35);  
         searchPanel.setBackground(Color.WHITE);
         searchPanel.setBorder(new RoundedBorder(10));
 
@@ -92,7 +93,7 @@ public class Dashboard {
 
         // 🔍 Emoji Label on the right inside the text field
         JLabel emojiLabel = new JLabel("🔍");
-        emojiLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));  // smaller emoji font
+        emojiLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));  
         emojiLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 8));
         emojiLabel.setHorizontalAlignment(SwingConstants.CENTER);
         searchPanel.add(emojiLabel, BorderLayout.EAST);
@@ -120,6 +121,8 @@ public class Dashboard {
         // Draw the icon/text on top
         super.paintComponent(g);
     }
+    
+   
 
     @Override
     public boolean contains(int x, int y) {
@@ -139,6 +142,12 @@ public class Dashboard {
         userButton.setOpaque(false);
         mainPanel.add(userButton);
 
+        userButton.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                new UserInfo(email); // Open Forgot Password screen on click
+            }
+        });
+        
         // Categories Label
         JLabel categoriesLabel = new JLabel("CATEGORIES");
         categoriesLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
