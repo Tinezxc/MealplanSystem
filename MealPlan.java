@@ -5,6 +5,8 @@ import javax.swing.border.AbstractBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MealPlan {
     private static final String[] DAYS = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
@@ -29,12 +31,12 @@ public class MealPlan {
 
         @Override
         public Insets getBorderInsets(Component c) {
-            return new Insets(radius + 1, radius + 1, radius + 1, radius + 1);
+            return new Insets(radius, radius, radius, radius);
         }
 
         @Override
         public Insets getBorderInsets(Component c, Insets insets) {
-            insets.set(radius + 1, radius + 1, radius + 1, radius + 1);
+            insets.set(radius, radius, radius, radius);
             return insets;
         }
     }
@@ -45,30 +47,41 @@ public class MealPlan {
         frame.setSize(1550, 800);
         frame.setLayout(null);
 
-        // Left-side panel
         JPanel leftPanel = new JPanel();
         leftPanel.setBackground(new Color(40, 40, 40));
         leftPanel.setBounds(0, 0, 150, 800);
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         frame.add(leftPanel);
 
-        leftPanel.add(Box.createVerticalStrut(150));
+        leftPanel.add(Box.createVerticalStrut(200));
 
         String[] navtitle = {"DASHBOARD", "MEAL PLAN", "SCHEDULE", "PROGRESS", "NOTIFICATION"};
         for (String title : navtitle) {
             JButton navButton = new JButton(title);
             navButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-            navButton.setMaximumSize(new Dimension(120, 200));
+            navButton.setMaximumSize(new Dimension(120, 40));
             navButton.setFocusPainted(false);
             navButton.setForeground(Color.WHITE);
             navButton.setBackground(new Color(60, 60, 60));
-            navButton.setBorder(new RoundedBorder(10));
             navButton.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+            navButton.setBorder(new RoundedBorder(10));
+
+            navButton.addActionListener(e -> {
+                frame.dispose();
+                switch (title) {
+                    case "DASHBOARD": new Dashboard(email); break;
+                    case "MEAL PLAN": new MealPlan(email); break;
+                    case "SCHEDULE": new Schedule(email); break;
+                    case "PROGRESS": new ProgressTracker(email); break;
+                    case "NOTIFICATION": new Notification(email); break;
+                    default: JOptionPane.showMessageDialog(null, "Coming soon!");
+                }
+            });
+
             leftPanel.add(navButton);
-            leftPanel.add(Box.createVerticalStrut(90));
+            leftPanel.add(Box.createVerticalStrut(70));
         }
 
-        // Top Panel
         JPanel topPanel = new JPanel(null);
         topPanel.setBounds(150, 0, 1400, 100);
         topPanel.setOpaque(false);
@@ -82,7 +95,7 @@ public class MealPlan {
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBounds(955, 20, 330, 35);
         searchPanel.setBackground(Color.WHITE);
-        searchPanel.setBorder(new MealPlan.RoundedBorder(10));
+        searchPanel.setBorder(new RoundedBorder(10));
 
         JTextField searchField = new JTextField();
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -91,32 +104,24 @@ public class MealPlan {
         searchPanel.add(searchField, BorderLayout.CENTER);
 
         JLabel emojiLabel = new JLabel("🔍");
-        emojiLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 14));
-        emojiLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 8));
+        emojiLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 17));
+        emojiLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         emojiLabel.setHorizontalAlignment(SwingConstants.CENTER);
         searchPanel.add(emojiLabel, BorderLayout.EAST);
 
         topPanel.add(searchPanel);
 
-        // User Button (👤)
         JButton userButton = new JButton("👤") {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2d = (Graphics2D) g.create();
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // Fill white circle background
                 g2d.setColor(Color.WHITE);
                 g2d.fillOval(0, 0, getWidth(), getHeight());
-
-                // Draw black border circle
                 g2d.setColor(Color.black);
                 g2d.setStroke(new BasicStroke(1));
                 g2d.drawOval(1, 1, getWidth() - 2, getHeight() - 2);
-
                 g2d.dispose();
-
-                // Draw the icon/text on top
                 super.paintComponent(g);
             }
 
@@ -136,6 +141,12 @@ public class MealPlan {
         userButton.setContentAreaFilled(false);
         userButton.setOpaque(false);
         topPanel.add(userButton);
+        
+        userButton.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                new UserInfo(email); // Open Forgot Password screen on click
+            }
+        });
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         buttonPanel.setBounds(875, 65, 470, 35);
@@ -177,7 +188,6 @@ public class MealPlan {
             headerPanel.add(label);
         }
 
-        // Grid Panel
         JPanel gridPanel = new JPanel(new GridLayout(DAYS.length, MEALS.length + 1, 20, 20));
         gridPanel.setOpaque(false);
         for (String day : DAYS) {
@@ -185,14 +195,14 @@ public class MealPlan {
             dayLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
             gridPanel.add(dayLabel);
 
-            for (int j = 0; j < MEALS.length; j++) {
+            for (String meal : MEALS) {
                 JButton mealButton = new JButton("+");
                 mealButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
                 mealButton.setFocusPainted(false);
                 mealButton.setBackground(Color.WHITE);
                 mealButton.setBorder(new RoundedBorder(10));
                 mealButton.setPreferredSize(new Dimension(80, 40));
-                mealButton.addActionListener(new MealButtonActionListener(day, MEALS[j])); // Add action listener
+                mealButton.addActionListener(new MealButtonActionListener(day, meal));
                 gridPanel.add(mealButton);
             }
         }
@@ -200,27 +210,14 @@ public class MealPlan {
         mealPanel.add(headerPanel, BorderLayout.NORTH);
         mealPanel.add(gridPanel, BorderLayout.CENTER);
 
-        // Action listeners for buttons
-        addButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "Add functionality not implemented yet.");
-        });
-
-        saveButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "Meal plan saved successfully.");
-        });
-
-        editButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "Edit functionality not implemented yet.");
-        });
-
-        deleteButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "Delete functionality not implemented yet.");
-        });
+        addButton.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Add functionality not implemented yet."));
+        saveButton.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Meal plan saved successfully."));
+        editButton.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Edit functionality not implemented yet."));
+        deleteButton.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Delete functionality not implemented yet."));
 
         frame.setVisible(true);
     }
 
-    // Action listener for meal buttons
     private class MealButtonActionListener implements ActionListener {
         private final String day;
         private final String meal;
@@ -232,7 +229,6 @@ public class MealPlan {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Logic to handle meal button click
             JOptionPane.showMessageDialog(null, "Meal added for " + day + ": " + meal);
         }
     }
