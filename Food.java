@@ -1,4 +1,6 @@
-package com.mycompany.ui;
+
+
+package com.mycompany.food;
 
 import javax.swing.*;
 import java.awt.*;
@@ -204,7 +206,7 @@ public class Food {
         headerPanel.setBounds(20, 180, 1360, 30);
         headerPanel.setOpaque(false);
 
-        String[] headers = {"FOODS", "CATEGORY", "CALORIES", "PROTEIN", "SUGAR", "FAT", "FRUIT"};
+        String[] headers = {"FOODS", "CATEGORY", "CALORIES", "PROTEIN", "SUGAR", "FAT"};
         int headerX = 130;
         for (int i = 0; i < headers.length; i++) {
             JLabel label = new JLabel(headers[i]);
@@ -226,14 +228,59 @@ public class Food {
         mainPanel.add(scrollPane);
 
         String[][] foodData = {
-            {"Chicken Breast", "Protein", "165", "31", "0", "3.6", "No", "C:\\Users\\THINKPAD\\Downloads\\cb.jpg"},
-            {"Salmon", "Protein", "208", "20", "0", "13", "No", "C:\\Users\\THINKPAD\\Downloads\\slm.jpg"},
-            {"Apple", "Fruit", "95", "0.5", "19", "0.3", "Yes", "src/images/apple.png"},
-            {"Banana", "Fruit", "105", "1.3", "14", "0.4", "Yes", "src/images/banana.png"},
-            {"Brown Rice", "Carb", "216", "5", "0.7", "1.8", "No", "src/images/rice.png"},
-            {"Broccoli", "Vegetable", "55", "3.7", "1.7", "0.6", "No", "src/images/broccoli.png"},
-            {"Greek Yogurt", "Dairy", "100", "10", "4", "0.7", "No", "src/images/yogurt.png"},
-            {"Oatmeal", "Carb", "150", "5", "1", "2.5", "No", "src/images/oatmeal.png"},};
+            {"Boiled Egg", "Protein", "78", "6.3", "0.6", "5.3", "D:\\My Documents\\Downloads\\boiled_egg.png"},
+            {"Oatmeal with Banana and Peanut Butter", "Carb", "250", "6", "10", "8", "D:\\My Documents\\Downloads\\oatmeal_banana_pb.png"},
+            {"Pandesal with Peanut Butter", "Carb", "220", "7", "5", "11", "D:\\My Documents\\Downloads\\pandesal_pb.png"},
+            {"Arroz Caldo with Chicken Breast", "Protein", "300", "20", "2", "10", "D:\\My Documents\\Downloads\\arroz_caldo.png"},
+            {"Taho", "Dairy", "180", "9", "14", "5", "D:\\My Documents\\Downloads\\taho.png"},
+            {"Champorado with Tablea and Brown Rice", "Carb", "240", "4", "15", "6", "D:\\My Documents\\Downloads\\champorado.png"},
+            {"Tinapa with Brown Rice", "Protein", "350", "25", "0", "20", "D:\\My Documents\\Downloads\\tinapa.png"},
+            {"Tuyo with Tomato and Rice", "Protein", "300", "20", "2", "15", "D:\\My Documents\\Downloads\\tuyo.png"},
+            {"Hard Boiled Eggs with Kamote", "Protein", "270", "12", "8", "10", "D:\\My Documents\\Downloads\\egg_kamote.png"},
+            {"Ginisang Munggo", "Vegetable", "180", "12", "6", "4", "D:\\My Documents\\Downloads\\munggo.png"},
+            {"Whole Wheat Pandesal with Kesong Puti", "Dairy", "210", "8", "4", "9", "D:\\My Documents\\Downloads\\pandesal_keso.png"},
+            {"Tortang Talong", "Vegetable", "190", "10", "3", "13", "D:\\My Documents\\Downloads\\tortang_talong.png"},
+            {"Fresh Fruit Salad", "Vegetable", "120", "1", "22", "3", "D:\\My Documents\\Downloads\\fruit_salad.png"},
+            {"Brown Rice with Scrambled Egg", "Carb", "280", "10", "1", "9", "D:\\My Documents\\Downloads\\rice_egg.png"},
+            {"Fish Lumpia", "Protein", "200", "15", "2", "10", "D:\\My Documents\\Downloads\\fish_lumpia.png"},
+            {"Ampalaya Omelet", "Vegetable", "150", "10", "2", "8", "D:\\My Documents\\Downloads\\ampalaya_omelet.png"},
+            {"Saging na Saba", "Carb", "120", "1", "27", "0.3", "D:\\My Documents\\Downloads\\saba.png"},
+            {"Vegetable Okoy", "Vegetable", "230", "5", "12", "14", "D:\\My Documents\\Downloads\\okoy.png"},
+            {"Chicken Tocino", "Protein", "260", "22", "8", "14", "D:\\My Documents\\Downloads\\tocino.png"},
+            {"Fresh Mango Slices with Greek Yogurt", "Dairy", "160", "8", "18", "3", "D:\\My Documents\\Downloads\\mango_yogurt.png"},
+            {"Chocolate Oatmeal and Chia Champorado", "Carb", "240", "6", "16", "7", "D:\\My Documents\\Downloads\\chia_champorado.png"},
+            {"Malunggay Pancake", "Carb", "190", "5", "10", "8", "D:\\My Documents\\Downloads\\malunggay_pancake.png"},
+            {"Fried Rice", "Carb", "240", "6", "2", "10", "D:\\My Documents\\Downloads\\fried_rice.png"},
+            {"Fresh Lumpia with Garlic Sauce", "Vegetable", "200", "4", "6", "8", "D:\\My Documents\\Downloads\\fresh_lumpia.png"},
+            {"Homemade Sardines with Wheat Toast", "Protein", "280", "18", "2", "15", "D:\\My Documents\\Downloads\\sardines_toast.png"},
+            {"Tinolang Isda", "Protein", "230", "20", "2", "9", "D:\\My Documents\\Downloads\\tinolang_isda.png"},
+            {"Ginataang Mais", "Carb", "210", "4", "14", "5", "D:\\My Documents\\Downloads\\ginataang_mais.png"},
+            {"Banana Oatmeal", "Carb", "200", "5", "18", "4", "D:\\My Documents\\Downloads\\banana_oatmeal.png"},
+            {"Chia Seed Pudding with Mango", "Dairy", "190", "6", "16", "9", "D:\\My Documents\\Downloads\\chia_pudding.png"},
+            {"Banana Cue", "Carb", "220", "2", "40", "8", "D:\\My Documents\\Downloads\\banana_cue.png"},
+            {"Kamote Cue", "Carb", "200", "1", "38", "6", "D:\\My Documents\\Downloads\\kamote_cue.png"},
+            {"Kutsinta", "Carb", "100", "1", "20", "1", "D:\\My Documents\\Downloads\\kutsinta.png"},
+            {"Espasol", "Carb", "150", "2", "25", "4", "D:\\My Documents\\Downloads\\espasol.png"},
+            {"Boiled Saging na Saba", "Carb", "120", "1", "27", "0.3", "D:\\My Documents\\Downloads\\boiled_saba.png"},
+            {"Boiled Corn on the Cob", "Carb", "130", "3", "29", "1", "D:\\My Documents\\Downloads\\boiled_corn.png"},
+            {"Papaya Slices", "Vegetable", "55", "0.9", "14", "0.2", "D:\\My Documents\\Downloads\\papaya.png"},
+            {"Pineapple Cubes", "Fruit", "60", "0.5", "16", "0.1", "D:\\My Documents\\Downloads\\pineapple.png"},
+            {"Mango Strips", "Fruit", "99", "1.4", "25", "0.6", "D:\\My Documents\\Downloads\\mango.png"},
+            {"Cucumber Slices with Vinegar", "Vegetable", "20", "1", "4", "0.1", "D:\\My Documents\\Downloads\\cucumber.png"},
+            {"Tomato Slices with Salt", "Vegetable", "15", "0.8", "3", "0.2", "D:\\My Documents\\Downloads\\tomato.png"},
+            {"Boiled Peanuts", "Protein", "160", "8", "6", "14", "D:\\My Documents\\Downloads\\peanuts.png"},
+            {"Baked Lumpiang Gulay", "Vegetable", "180", "6", "10", "8", "D:\\My Documents\\Downloads\\lumpiang_gulay.png"},
+            {"Pan de Coco", "Carb", "260", "6", "35", "10", "D:\\My Documents\\Downloads\\pan_de_coco.png"},
+            {"Ube Halaya", "Carb", "200", "2", "38", "6", "D:\\My Documents\\Downloads\\ube_halaya.png"},
+            {"Fresh Buko Juice", "Beverage", "90", "0", "22", "0", "D:\\My Documents\\Downloads\\buko_juice.png"},
+            {"Grilled Corn", "Carb", "150", "3", "28", "2", "D:\\My Documents\\Downloads\\grilled_corn.png"},
+            {"Pakwan", "Fruit", "50", "1", "12", "0.1", "D:\\My Documents\\Downloads\\pakwan.png"},
+            {"Boiled Quail Eggs", "Protein", "160", "13", "1", "11", "D:\\My Documents\\Downloads\\quail_eggs.png"},
+            {"Cheesy Nilupak", "Carb", "230", "4", "25", "12", "D:\\My Documents\\Downloads\\nilupak.png"},
+            {"Malunggay Smoothie", "Vegetable", "130", "3", "18", "5", "D:\\My Documents\\Downloads\\malunggay_smoothie.png"},
+            {"Baked Sweet Potato with Cinnamon", "Carb", "180", "2", "30", "4", "D:\\My Documents\\Downloads\\baked_cinnamon.png"},
+            {"Turmeric Ginger Tea with Kasuy", "Beverage", "70", "2", "6", "4", "D:\\My Documents\\Downloads\\turmeric_tea.png"},
+            {"Lowfat Yogurt with Ripe Mango", "Dairy", "150", "6", "22", "3", "D:\\My Documents\\Downloads\\yogurt_mango.png"},};
 
         for (String[] food : foodData) {
             JPanel foodPanel = new JPanel(null);
@@ -241,7 +288,8 @@ public class Food {
             foodPanel.setBackground(Color.white);
             foodPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
-            ImageIcon icon = new ImageIcon(food[7]);
+            // ✅ Corrected index: use food[6] for the image path
+            ImageIcon icon = new ImageIcon(food[6]);
             Image image = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
             JLabel imageLabel = new JLabel(new ImageIcon(image));
             imageLabel.setBounds(10, 10, 100, 100);
@@ -254,7 +302,6 @@ public class Food {
             foodPanel.add(createLabel(food[3] + "g", xStart + spacing * 3, y));
             foodPanel.add(createLabel(food[4] + "g", xStart + spacing * 4, y));
             foodPanel.add(createLabel(food[5] + "g", xStart + spacing * 5, y));
-            foodPanel.add(createLabel(food[6], xStart + spacing * 6, y));
 
             foodListPanel.add(Box.createVerticalStrut(10));
             foodListPanel.add(foodPanel);
