@@ -1,7 +1,15 @@
-package Food;
+package com.mycompany.food;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 class RoundedBorder extends javax.swing.border.AbstractBorder {
 
@@ -34,9 +42,13 @@ class RoundedBorder extends javax.swing.border.AbstractBorder {
 public class Food {
 
     private JPanel foodListPanel;
+    private List<String[]> foodDataList;
+    private JPanel selectedFoodPanel = null;
+    private int selectedFoodIndex = -1;
+    private JFrame frame; // make frame a class member to reference inside handlers
 
     public Food(String email) {
-        JFrame frame = new JFrame("FOODS");
+        frame = new JFrame("FOODS");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1550, 800);
         frame.setLayout(null);
@@ -102,11 +114,13 @@ public class Food {
         userButton.setContentAreaFilled(false);
         mainPanel.add(userButton);
 
+        // Filter panel with buttons on the right
         JPanel filterPanel = new JPanel(new BorderLayout());
         filterPanel.setBounds(10, 120, 1360, 50);
         filterPanel.setBackground(Color.WHITE);
         mainPanel.add(filterPanel);
 
+        // Left side filters
         JPanel filtersLeft = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         filtersLeft.setBackground(Color.WHITE);
         filtersLeft.add(new JLabel("ALL ITEMS:"));
@@ -116,7 +130,7 @@ public class Food {
         filtersLeft.add(allItemsField);
 
         filtersLeft.add(new JLabel("CATEGORIES:"));
-        JComboBox<String> categoryBox = new JComboBox<>(new String[]{"Vegetables", "Protein", "Carb", "Dairy"});
+        JComboBox<String> categoryBox = new JComboBox<>(new String[]{"Vegetables", "Fruits", "Protein", "Carb", "Dairy"});
         categoryBox.setPreferredSize(new Dimension(200, 30));
         categoryBox.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         filtersLeft.add(categoryBox);
@@ -128,9 +142,10 @@ public class Food {
         filtersLeft.add(mealPlanBox);
         filterPanel.add(filtersLeft, BorderLayout.WEST);
 
-        JPanel buttonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10));
+        // Right side buttons
+        JPanel buttonsRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 10)); // 10px gaps for better spacing
         buttonsRight.setBackground(Color.WHITE);
-        buttonsRight.setPreferredSize(new Dimension(400, 50));
+        buttonsRight.setPreferredSize(new Dimension(400, 50)); // Set enough width to contain all buttons
 
         String[] buttonLabels = {"ADD", "SAVE", "EDIT", "DELETE"};
         for (String label : buttonLabels) {
@@ -142,17 +157,13 @@ public class Food {
             buttonsRight.add(button);
 
             switch (label) {
-                case "ADD" ->
-                    button.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Add functionality not implemented yet."));
-                case "SAVE" ->
-                    button.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Food list saved successfully."));
-                case "EDIT" ->
-                    button.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Edit functionality not implemented yet."));
-                case "DELETE" ->
-                    button.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Delete functionality not implemented yet."));
+                case "ADD" -> button.addActionListener(e -> showAddFoodDialog());
+                case "SAVE" -> button.addActionListener(e -> saveFoodListToFile());
+                case "EDIT" -> button.addActionListener(e -> showEditFoodDialog());
+                case "DELETE" -> button.addActionListener(e -> deleteSelectedFood());
             }
         }
-        filterPanel.add(buttonsRight, BorderLayout.EAST);
+        filterPanel.add(buttonsRight, BorderLayout.EAST); // Ensure it's added to EAST
 
         JPanel headerPanel = new JPanel(null) {
             @Override
@@ -189,85 +200,68 @@ public class Food {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         mainPanel.add(scrollPane);
 
+        foodDataList = new ArrayList<>();
         String[][] foodData = {
             {"Boiled Egg", "Protein", "78", "6.3", "0.6", "5.3", "D:\\My Documents\\Downloads\\boiled_egg.png"},
-            {"Oatmeal with Banana and Peanut Butter", "Carb", "250", "6", "10", "8", "D:\\My Documents\\Downloads\\oatmeal_banana_pb.png"},
-            {"Pandesal with Peanut Butter", "Carb", "220", "7", "5", "11", "D:\\My Documents\\Downloads\\pandesal_pb.png"},
-            {"Arroz Caldo with Chicken Breast", "Protein", "300", "20", "2", "10", "D:\\My Documents\\Downloads\\arroz_caldo.png"},
+            {"Banana Peanut Butter", "Carb", "250", "6", "10", "8", "D:\\My Documents\\Downloads\\oatmeal_banana_pb.png"},
+            {"Pandesal Peanut butter", "Carb", "220", "7", "5", "11", "D:\\My Documents\\Downloads\\pandesal_pb.png"},
+            {"Arroz Caldo", "Protein", "300", "20", "2", "10", "D:\\My Documents\\Downloads\\arroz_caldo.png"},
             {"Taho", "Dairy", "180", "9", "14", "5", "D:\\My Documents\\Downloads\\taho.png"},
-            {"Champorado with Tablea and Brown Rice", "Carb", "240", "4", "15", "6", "D:\\My Documents\\Downloads\\champorado.png"},
+            {"Champorado", "Carb", "240", "4", "15", "6", "D:\\My Documents\\Downloads\\champorado.png"},
             {"Tinapa with Brown Rice", "Protein", "350", "25", "0", "20", "D:\\My Documents\\Downloads\\tinapa.png"},
             {"Tuyo with Tomato and Rice", "Protein", "300", "20", "2", "15", "D:\\My Documents\\Downloads\\tuyo.png"},
-            {"Hard Boiled Eggs with Kamote", "Protein", "270", "12", "8", "10", "D:\\My Documents\\Downloads\\egg_kamote.png"},
+            {"Eggs Kamote", "Protein", "270", "12", "8", "10", "D:\\My Documents\\Downloads\\egg_kamote.png"},
             {"Ginisang Munggo", "Vegetable", "180", "12", "6", "4", "D:\\My Documents\\Downloads\\munggo.png"},
             {"Whole Wheat Pandesal with Kesong Puti", "Dairy", "210", "8", "4", "9", "D:\\My Documents\\Downloads\\pandesal_keso.png"},
             {"Tortang Talong", "Vegetable", "190", "10", "3", "13", "D:\\My Documents\\Downloads\\tortang_talong.png"},
             {"Fresh Fruit Salad", "Vegetable", "120", "1", "22", "3", "D:\\My Documents\\Downloads\\fruit_salad.png"},
-            {"Brown Rice with Scrambled Egg", "Carb", "280", "10", "1", "9", "D:\\My Documents\\Downloads\\rice_egg.png"},
+            {"Rice Scrambled Egg", "Carb", "280", "10", "1", "9", "D:\\My Documents\\Downloads\\rice_egg.png"},
             {"Fish Lumpia", "Protein", "200", "15", "2", "10", "D:\\My Documents\\Downloads\\fish_lumpia.png"},
             {"Ampalaya Omelet", "Vegetable", "150", "10", "2", "8", "D:\\My Documents\\Downloads\\ampalaya_omelet.png"},
             {"Saging na Saba", "Carb", "120", "1", "27", "0.3", "D:\\My Documents\\Downloads\\saba.png"},
             {"Vegetable Okoy", "Vegetable", "230", "5", "12", "14", "D:\\My Documents\\Downloads\\okoy.png"},
             {"Chicken Tocino", "Protein", "260", "22", "8", "14", "D:\\My Documents\\Downloads\\tocino.png"},
-            {"Fresh Mango Slices with Greek Yogurt", "Dairy", "160", "8", "18", "3", "D:\\My Documents\\Downloads\\mango_yogurt.png"},
-            {"Chocolate Oatmeal and Chia Champorado", "Carb", "240", "6", "16", "7", "D:\\My Documents\\Downloads\\chia_champorado.png"},
+            {"Mango Greek Yogurt", "Dairy", "160", "8", "18", "3", "D:\\My Documents\\Downloads\\mango_yogurt.png"},
+            {"Chia Champorado", "Carb", "240", "6", "16", "7", "D:\\My Documents\\Downloads\\chia_champorado.png"},
             {"Malunggay Pancake", "Carb", "190", "5", "10", "8", "D:\\My Documents\\Downloads\\malunggay_pancake.png"},
             {"Fried Rice", "Carb", "240", "6", "2", "10", "D:\\My Documents\\Downloads\\fried_rice.png"},
-            {"Fresh Lumpia with Garlic Sauce", "Vegetable", "200", "4", "6", "8", "D:\\My Documents\\Downloads\\fresh_lumpia.png"},
-            {"Homemade Sardines with Wheat Toast", "Protein", "280", "18", "2", "15", "D:\\My Documents\\Downloads\\sardines_toast.png"},
+            {"Lumpia Garlic Sauce", "Vegetable", "200", "4", "6", "8", "D:\\My Documents\\Downloads\\fresh_lumpia.png"},
+            {"Sardines Wheat Toast", "Protein", "280", "18", "2", "15", "D:\\My Documents\\Downloads\\sardines_toast.png"},
             {"Tinolang Isda", "Protein", "230", "20", "2", "9", "D:\\My Documents\\Downloads\\tinolang_isda.png"},
             {"Ginataang Mais", "Carb", "210", "4", "14", "5", "D:\\My Documents\\Downloads\\ginataang_mais.png"},
             {"Banana Oatmeal", "Carb", "200", "5", "18", "4", "D:\\My Documents\\Downloads\\banana_oatmeal.png"},
-            {"Chia Seed Pudding with Mango", "Dairy", "190", "6", "16", "9", "D:\\My Documents\\Downloads\\chia_pudding.png"},
+            {"Pudding with Mango", "Dairy", "190", "6", "16", "9", "D:\\My Documents\\Downloads\\chia_pudding.png"},
             {"Banana Cue", "Carb", "220", "2", "40", "8", "D:\\My Documents\\Downloads\\banana_cue.png"},
             {"Kamote Cue", "Carb", "200", "1", "38", "6", "D:\\My Documents\\Downloads\\kamote_cue.png"},
             {"Kutsinta", "Carb", "100", "1", "20", "1", "D:\\My Documents\\Downloads\\kutsinta.png"},
             {"Espasol", "Carb", "150", "2", "25", "4", "D:\\My Documents\\Downloads\\espasol.png"},
-            {"Boiled Saging na Saba", "Carb", "120", "1", "27", "0.3", "D:\\My Documents\\Downloads\\boiled_saba.png"},
-            {"Boiled Corn on the Cob", "Carb", "130", "3", "29", "1", "D:\\My Documents\\Downloads\\boiled_corn.png"},
+            {"Saging na Saba", "Carb", "120", "1", "27", "0.3", "D:\\My Documents\\Downloads\\boiled_saba.png"},
+            {"Corn on the Cob", "Carb", "130", "3", "29", "1", "D:\\My Documents\\Downloads\\boiled_corn.png"},
             {"Papaya Slices", "Vegetable", "55", "0.9", "14", "0.2", "D:\\My Documents\\Downloads\\papaya.png"},
             {"Pineapple Cubes", "Fruit", "60", "0.5", "16", "0.1", "D:\\My Documents\\Downloads\\pineapple.png"},
             {"Mango Strips", "Fruit", "99", "1.4", "25", "0.6", "D:\\My Documents\\Downloads\\mango.png"},
             {"Cucumber Slices with Vinegar", "Vegetable", "20", "1", "4", "0.1", "D:\\My Documents\\Downloads\\cucumber.png"},
-            {"Tomato Slices with Salt", "Vegetable", "15", "0.8", "3", "0.2", "D:\\My Documents\\Downloads\\tomato.png"},
+            {"Tomato Slices", "Vegetable", "15", "0.8", "3", "0.2", "D:\\My Documents\\Downloads\\tomato.png"},
             {"Boiled Peanuts", "Protein", "160", "8", "6", "14", "D:\\My Documents\\Downloads\\peanuts.png"},
-            {"Baked Lumpiang Gulay", "Vegetable", "180", "6", "10", "8", "D:\\My Documents\\Downloads\\lumpiang_gulay.png"},
+            {"Lumpiang Gulay", "Vegetable", "180", "6", "10", "8", "D:\\My Documents\\Downloads\\lumpiang_gulay.png"},
             {"Pan de Coco", "Carb", "260", "6", "35", "10", "D:\\My Documents\\Downloads\\pan_de_coco.png"},
             {"Ube Halaya", "Carb", "200", "2", "38", "6", "D:\\My Documents\\Downloads\\ube_halaya.png"},
             {"Fresh Buko Juice", "Beverage", "90", "0", "22", "0", "D:\\My Documents\\Downloads\\buko_juice.png"},
             {"Grilled Corn", "Carb", "150", "3", "28", "2", "D:\\My Documents\\Downloads\\grilled_corn.png"},
             {"Pakwan", "Fruit", "50", "1", "12", "0.1", "D:\\My Documents\\Downloads\\pakwan.png"},
-            {"Boiled Quail Eggs", "Protein", "160", "13", "1", "11", "D:\\My Documents\\Downloads\\quail_eggs.png"},
+            {"Boiled QuailEggs", "Protein", "160", "13", "1", "11", "D:\\My Documents\\Downloads\\quail_eggs.png"},
             {"Cheesy Nilupak", "Carb", "230", "4", "25", "12", "D:\\My Documents\\Downloads\\nilupak.png"},
             {"Malunggay Smoothie", "Vegetable", "130", "3", "18", "5", "D:\\My Documents\\Downloads\\malunggay_smoothie.png"},
-            {"Baked Sweet Potato with Cinnamon", "Carb", "180", "2", "30", "4", "D:\\My Documents\\Downloads\\baked_cinnamon.png"},
-            {"Turmeric Ginger Tea with Kasuy", "Beverage", "70", "2", "6", "4", "D:\\My Documents\\Downloads\\turmeric_tea.png"},
-            {"Lowfat Yogurt with Ripe Mango", "Dairy", "150", "6", "22", "3", "D:\\My Documents\\Downloads\\yogurt_mango.png"},};
+            {"Baked Sweet Potato", "Carb", "180", "2", "30", "4", "D:\\My Documents\\Downloads\\baked_cinnamon.png"},
+            {"Turmeric GingerTea", "Beverage", "70", "2", "6", "4", "D:\\My Documents\\Downloads\\turmeric_tea.png"},
+            {"Lowfat Yogurt", "Dairy", "150", "6", "22", "3", "D:\\My Documents\\Downloads\\yogurt_mango.png"},
+        };
 
         for (String[] food : foodData) {
-            JPanel foodPanel = new JPanel(null);
-            foodPanel.setPreferredSize(new Dimension(1320, 120));
-            foodPanel.setBackground(Color.white);
-            foodPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-
-            // ✅ Corrected index: use food[6] for the image path
-            ImageIcon icon = new ImageIcon(food[6]);
-            Image image = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            JLabel imageLabel = new JLabel(new ImageIcon(image));
-            imageLabel.setBounds(10, 10, 100, 100);
-            foodPanel.add(imageLabel);
-
-            int xStart = 130, y = 45, spacing = 180;
-            foodPanel.add(createLabel(food[0], xStart, y));
-            foodPanel.add(createLabel(food[1], xStart + spacing, y));
-            foodPanel.add(createLabel(food[2] + " kcal", xStart + spacing * 2, y));
-            foodPanel.add(createLabel(food[3] + "g", xStart + spacing * 3, y));
-            foodPanel.add(createLabel(food[4] + "g", xStart + spacing * 4, y));
-            foodPanel.add(createLabel(food[5] + "g", xStart + spacing * 5, y));
-
-            foodListPanel.add(Box.createVerticalStrut(10));
-            foodListPanel.add(foodPanel);
+            foodDataList.add(food);
         }
+
+        refreshFoodList();
 
         frame.setVisible(true);
     }
@@ -278,7 +272,163 @@ public class Food {
         return label;
     }
 
+    private void refreshFoodList() {
+        foodListPanel.removeAll();
+        for (int i = 0; i < foodDataList.size(); i++) {
+            String[] food = foodDataList.get(i);
+            JPanel foodPanel = new JPanel(null);
+            foodPanel.setPreferredSize(new Dimension(1320, 120));
+            foodPanel.setBackground(i == selectedFoodIndex ? new Color(200, 230, 255) : Color.white);
+            foodPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+            ImageIcon icon = new ImageIcon(food[6]);
+            Image image = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            JLabel imageLabel = new JLabel(new ImageIcon(image));
+            imageLabel.setBounds(10, 10, 100, 100);
+            foodPanel.add(imageLabel);
+            int xStart = 130, y = 45, spacing = 180;
+            foodPanel.add(createLabel(food[0], xStart, y));
+            foodPanel.add(createLabel(food[1], xStart + spacing, y));
+            foodPanel.add(createLabel(food[2] + " kcal", xStart + spacing * 2, y));
+            foodPanel.add(createLabel(food[3] + "g", xStart + spacing * 3, y));
+            foodPanel.add(createLabel(food[4] + "g", xStart + spacing * 4, y));
+            foodPanel.add(createLabel(food[5] + "g", xStart + spacing * 5, y));
+            JButton plusButton = new JButton("+");
+            plusButton.setFont(new Font("Arial", Font.PLAIN, 20));
+            plusButton.setBounds(1220, 35, 60, 50);
+            plusButton.setBackground(Color.WHITE);
+            plusButton.setForeground(Color.BLACK);
+            plusButton.setFocusPainted(false);
+            plusButton.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
+            final String foodName = food[0];
+            plusButton.addActionListener(e -> JOptionPane.showMessageDialog(foodPanel, "Added " + foodName + " to your selection!"));
+            foodPanel.add(plusButton);
+            final int index = i;
+            foodPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    selectedFoodIndex = index;
+                    selectedFoodPanel = foodPanel;
+                    refreshFoodList();
+                }
+            });
+            foodListPanel.add(Box.createVerticalStrut(10));
+            foodListPanel.add(foodPanel);
+        }
+        foodListPanel.revalidate();
+        foodListPanel.repaint();
+    }
+
+    // Dialog for adding a new food item
+    private void showAddFoodDialog() {
+        showFoodDialog(null, -1);
+    }
+
+    // Dialog for editing an existing food item
+    private void showEditFoodDialog() {
+        if (selectedFoodIndex < 0 || selectedFoodIndex >= foodDataList.size()) {
+            JOptionPane.showMessageDialog(frame, "Please select a food item to edit.");
+            return;
+        }
+        showFoodDialog(foodDataList.get(selectedFoodIndex), selectedFoodIndex);
+    }
+
+    // Generic food dialog for add/edit with existing data if editing
+    private void showFoodDialog(String[] foodData, int indexToEdit) {
+        JTextField nameField = new JTextField();
+        JComboBox<String> categoryBox = new JComboBox<>(new String[]{"Vegetables", "Fruits", "Protein", "Carb", "Dairy", "Beverage"});
+        JTextField caloriesField = new JTextField();
+        JTextField proteinField = new JTextField();
+        JTextField sugarField = new JTextField();
+        JTextField fatField = new JTextField();
+        JTextField imagePathField = new JTextField();
+
+        if (foodData != null) {
+            // Pre-fill fields
+            nameField.setText(foodData[0]);
+            categoryBox.setSelectedItem(foodData[1]);
+            caloriesField.setText(foodData[2]);
+            proteinField.setText(foodData[3]);
+            sugarField.setText(foodData[4]);
+            fatField.setText(foodData[5]);
+            imagePathField.setText(foodData[6]);
+        }
+
+        JPanel panel = new JPanel(new GridLayout(0, 2, 5, 5));
+        panel.add(new JLabel("Name:")); panel.add(nameField);
+        panel.add(new JLabel("Category:")); panel.add(categoryBox);
+        panel.add(new JLabel("Calories:")); panel.add(caloriesField);
+        panel.add(new JLabel("Protein (g):")); panel.add(proteinField);
+        panel.add(new JLabel("Sugar (g):")); panel.add(sugarField);
+        panel.add(new JLabel("Fat (g):")); panel.add(fatField);
+        panel.add(new JLabel("Image Path:")); panel.add(imagePathField);
+
+        int result = JOptionPane.showConfirmDialog(frame, panel, indexToEdit >= 0 ? "Edit Food Item" : "Add New Food", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
+            String name = nameField.getText().trim();
+            String category = (String) categoryBox.getSelectedItem();
+            String calories = caloriesField.getText().trim();
+            String protein = proteinField.getText().trim();
+            String sugar = sugarField.getText().trim();
+            String fat = fatField.getText().trim();
+            String imagePath = imagePathField.getText().trim();
+            if (!name.isEmpty() && !category.isEmpty() && !calories.isEmpty() && !protein.isEmpty() && !sugar.isEmpty() && !fat.isEmpty() && !imagePath.isEmpty()) {
+                String[] newFood = {name, category, calories, protein, sugar, fat, imagePath};
+                if (indexToEdit >= 0) {
+                    foodDataList.set(indexToEdit, newFood);
+                } else {
+                    foodDataList.add(newFood);
+                }
+                selectedFoodIndex = -1; // reset selection after add/edit
+                refreshFoodList();
+            } else {
+                JOptionPane.showMessageDialog(frame, "All fields are required.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void deleteSelectedFood() {
+        if (selectedFoodIndex < 0 || selectedFoodIndex >= foodDataList.size()) {
+            JOptionPane.showMessageDialog(frame, "Please select a food item to delete.");
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete the selected food item?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            foodDataList.remove(selectedFoodIndex);
+            selectedFoodIndex = -1;
+            refreshFoodList();
+        }
+    }
+
+    private void saveFoodListToFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Food List");
+        int userSelection = fileChooser.showSaveDialog(frame);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileToSave))) {
+                for (String[] food : foodDataList) {
+                    // Join fields with commas, escaping commas in text if needed
+                    String line = String.join(",", escapeCsv(food[0]), escapeCsv(food[1]), escapeCsv(food[2]), escapeCsv(food[3]), escapeCsv(food[4]), escapeCsv(food[5]), escapeCsv(food[6]));
+                    writer.write(line);
+                    writer.newLine();
+                }
+                JOptionPane.showMessageDialog(frame, "Food list saved successfully.");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(frame, "Error saving file: " + e.getMessage(), "Save Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private String escapeCsv(String text) {
+        if (text.contains(",") || text.contains("\"") || text.contains("\n")) {
+            text = text.replace("\"", "\"\"");
+            return "\"" + text + "\"";
+        }
+        return text;
+    }
+
     public static void main(String[] args) {
-        new Food("demo@example.com");
+        SwingUtilities.invokeLater(() -> new Food("demo@example.com"));
     }
 }
+
